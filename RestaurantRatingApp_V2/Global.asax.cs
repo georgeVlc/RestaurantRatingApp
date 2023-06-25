@@ -8,6 +8,8 @@ using System.Web.Routing;
 using System.Web.Security;
 using System.Web.SessionState;
 using System.Web.Http;
+using RestaurantRatingApp_V2.Models;
+using System.Data.Entity;
 
 namespace RestaurantRatingApp_V2
 {
@@ -19,7 +21,10 @@ namespace RestaurantRatingApp_V2
             AreaRegistration.RegisterAllAreas();
             GlobalConfiguration.Configure(WebApiConfig.Register);
             RouteConfig.RegisterRoutes(RouteTable.Routes);
-            BundleConfig.RegisterBundles(BundleTable.Bundles);            
+            BundleConfig.RegisterBundles(BundleTable.Bundles);
+
+            // Initialize the database.
+            Database.SetInitializer(new DatabaseInitializer());
         }
     }
 }

@@ -1,8 +1,10 @@
 ﻿using RestaurantRatingApp_V2.Controllers;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Web;
+using System.Xml.Linq;
 
 namespace RestaurantRatingApp_V2.Models
 {
@@ -22,10 +24,15 @@ namespace RestaurantRatingApp_V2.Models
         private CousineType _type;
         private String _description;
 
+        [Required, StringLength(100), Display(Name = "Name")]
         public String Name { get { return this._name; } protected set { this._name = value; } }
+        [Display(Name = "Restaurant rating")]
         public float Rating { get { return this._rating; } protected set { this._rating = value; } }
+        [StringLength(100), Display(Name = "ImgName")]
         public String ImgName { get { return this._imgName; } protected set { this._imgName = value; } }
+        [StringLength(100), Display(Name = "Cousine Type")]
         public CousineType Type { get { return this._type; } protected set { this._type = value; } }
+        [Display(Name = "Product Description")]
         public String Description { get { return this._description; } protected set { this._description = value; } }
 
         public Restaurant()

@@ -4,6 +4,8 @@ using System.Linq;
 using System.Web;
 using System.Text;
 using RestaurantRatingApp_V2.Controllers;
+using System.ComponentModel.DataAnnotations;
+using System.Xml.Linq;
 
 namespace RestaurantRatingApp_V2.Models
 {
@@ -22,7 +24,9 @@ namespace RestaurantRatingApp_V2.Models
         private UserType _userType;
 
         // public accessors
+        [Required, StringLength(100), Display(Name = "Name")]
         public String Username { get { return this._username; } protected set { this._username = value; } }
+        [Required, StringLength(100), Display(Name = "Type")]
         public UserType Type { get  { return this._userType; } protected set { this._userType = value; } }
 
         // setters

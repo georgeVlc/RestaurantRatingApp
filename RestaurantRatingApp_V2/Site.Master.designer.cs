@@ -7,11 +7,13 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace RestaurantRatingApp_V2 {
-    
-    
-    public partial class SiteMaster {
-        
+namespace RestaurantRatingApp_V2
+{
+
+
+    public partial class SiteMaster
+    {
+
         /// <summary>
         /// MainContent control.
         /// </summary>

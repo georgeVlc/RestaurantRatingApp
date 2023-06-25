@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Security.Claims;
 using System.Security.Principal;
 using System.Web;
@@ -7,6 +8,7 @@ using System.Web.Security;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using Microsoft.AspNet.Identity;
+using RestaurantRatingApp_V2.Models;
 
 namespace RestaurantRatingApp_V2
 {
@@ -70,6 +72,12 @@ namespace RestaurantRatingApp_V2
         protected void Page_Load(object sender, EventArgs e)
         {
 
+        }
+        public IQueryable<Restaurant> GetRestaurants()
+        {
+            var _db = new RestaurantRatingApp_V2.Models.RestaurantContext();
+            IQueryable<Restaurant> query = _db.Restaurants;
+            return query;
         }
 
         protected void Unnamed_LoggingOut(object sender, LoginCancelEventArgs e)

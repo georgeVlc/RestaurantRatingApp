@@ -1,8 +1,10 @@
 ﻿using RestaurantRatingApp_V2.Controllers;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Web;
+using System.Xml.Linq;
 
 
 namespace RestaurantRatingApp_V2.Models
@@ -15,8 +17,11 @@ namespace RestaurantRatingApp_V2.Models
             private String _restaurantName;
             private float _rating;
 
+            [Required, StringLength(10000), Display(Name = "User")]
             public String Username { get { return this._username; } protected set { this._username = value; } }
+            [Required, StringLength(10000), Display(Name = "Restaurant")]
             public String RestaurantName { get { return this._restaurantName; } protected set { this._restaurantName = value; } }
+            [Display(Name = "Rating")]
             public float Rating { get { return this._rating; } protected set { this._rating = value; } }
 
             public Review()
