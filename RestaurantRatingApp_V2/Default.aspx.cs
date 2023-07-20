@@ -13,11 +13,7 @@ namespace RestaurantRatingApp_V2
     {
         protected void Page_Load(object sender, EventArgs e)
         {
-            var restaurants = DbAccess.SelectRestaurants();
-            foreach (Restaurant r in restaurants)
-            {
-                System.Diagnostics.Debug.WriteLine(r.Type);
-            }
+
         }
     }
 }
