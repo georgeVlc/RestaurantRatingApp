@@ -397,6 +397,7 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Models\DatabaseInitializer.cs" />
+    <Compile Include="Models\dbAccess.cs" />
     <Compile Include="Models\IdentityModels.cs" />
     <Compile Include="Models\Restaurant.cs" />
     <Compile Include="Models\RestaurantContext.cs" />
