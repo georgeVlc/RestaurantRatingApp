@@ -13,9 +13,11 @@ namespace RestaurantRatingApp_V2.Models
         public enum CousineType : byte
         {
             NONE = 0,
-            TYPE1,
-            TYPE2,
-            TYPE3
+            Greek,
+            contemporary,
+            Asian,
+            Italian,
+            Mexican
         }
 
         private String _name;

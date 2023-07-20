@@ -11,10 +11,10 @@ using System;
 
 namespace RestaurantRatingApp_V2.Models
 {
-    public class dbAccess
+    public class DbAccess
     {
 
-        public static List<User> GetUsers()
+        public static List<User> SelectUsers()
         {
             List<User> UserList = new List<User>();
             try
@@ -42,8 +42,9 @@ namespace RestaurantRatingApp_V2.Models
             }
             return UserList;
         }
-
-        public static List<Restaurant> GetRestaurants()
+        //TODO
+        //read cousine type from db and translate to cousineType
+        public static List<Restaurant> SelectRestaurants()
         {
             List<Restaurant> RestaurantList = new List<Restaurant>();
             try
@@ -59,7 +60,7 @@ namespace RestaurantRatingApp_V2.Models
                     SqlDataReader sdr = cm.ExecuteReader();
                     while (sdr.Read())
                     {
-                        RestaurantList.Add(new Restaurant(sdr["name"].ToString(), sdr["imageName"].ToString(), CousineType.TYPE1));
+                        RestaurantList.Add(new Restaurant(sdr["name"].ToString(), sdr["imageName"].ToString(), CousineType.Italian));
                     }
                 }
             }
@@ -70,7 +71,7 @@ namespace RestaurantRatingApp_V2.Models
             return RestaurantList;
         }
 
-        public static List<Review> GetReviews()
+        public static List<Review> SelectReviews()
         {
             List<Review> ReviewsList = new List<Review>();
             try
@@ -111,7 +112,7 @@ namespace RestaurantRatingApp_V2.Models
                     SqlCommand cm = new SqlCommand("delete from Restaurant where name='"+restaurantName+"';", connection);
                     // Executing the SQL query  
                     SqlDataReader sdr = cm.ExecuteReader();
-                    System.Diagnostics.Debug.WriteLine("hello1");
+                    //stem.Diagnostics.Debug.WriteLine("hello1");
                 }
             }
             catch (Exception e)
