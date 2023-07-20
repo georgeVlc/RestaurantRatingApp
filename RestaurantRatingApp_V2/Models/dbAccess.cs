@@ -42,11 +42,17 @@ namespace RestaurantRatingApp_V2.Models
             }
             return UserList;
         }
-        //TODO
-        //read cousine type from db and translate to cousineType
+
         public static List<Restaurant> SelectRestaurants()
         {
             List<Restaurant> RestaurantList = new List<Restaurant>();
+            var cousineType = new Dictionary<string, CousineType>(){
+            {"Italian", CousineType.Italian},
+            {"contemporary", CousineType.contemporary},
+            {"Greek", CousineType.Greek},
+            {"Asian", CousineType.Asian},
+            {"Mexican", CousineType.Mexican}
+            };
             try
             {
                 string ConString = ConfigurationManager.ConnectionStrings["RestaurantRatingApp"].ConnectionString;
@@ -60,7 +66,8 @@ namespace RestaurantRatingApp_V2.Models
                     SqlDataReader sdr = cm.ExecuteReader();
                     while (sdr.Read())
                     {
-                        RestaurantList.Add(new Restaurant(sdr["name"].ToString(), sdr["imageName"].ToString(), CousineType.Italian));
+                        CousineType type = cousineType[sdr["type"].ToString()];
+                        RestaurantList.Add(new Restaurant(sdr["name"].ToString(), sdr["imageName"].ToString(), type));
                     }
                 }
             }
@@ -85,7 +92,7 @@ namespace RestaurantRatingApp_V2.Models
                     SqlCommand cm = new SqlCommand("select * from Reviews", connection);
                     // Executing the SQL query  
                     SqlDataReader sdr = cm.ExecuteReader();
-                    System.Diagnostics.Debug.WriteLine("hello1");
+                    System.Diagnostics.Debug.WriteLine("Reviews selection was successfull");
                     while (sdr.Read())
                     {
                         ReviewsList.Add(new Review(sdr["restaurant"].ToString(), sdr["userName"].ToString(), float.Parse(sdr["rating"].ToString())));
@@ -134,7 +141,7 @@ namespace RestaurantRatingApp_V2.Models
                     SqlCommand cm = new SqlCommand("delete from Users where name='" + name + "';", connection);
                     // Executing the SQL query  
                     SqlDataReader sdr = cm.ExecuteReader();
-                    System.Diagnostics.Debug.WriteLine("hello1");
+                    System.Diagnostics.Debug.WriteLine("Delete user was succesfull");
                 }
             }
             catch (Exception e)

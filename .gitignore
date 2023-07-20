@@ -361,3 +361,5 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+/RestaurantRatingApp_V2/App_Data/Database.mdf
+/RestaurantRatingApp_V2/App_Data/Database_log.ldf

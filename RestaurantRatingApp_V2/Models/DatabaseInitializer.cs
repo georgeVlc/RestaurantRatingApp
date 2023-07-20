@@ -22,7 +22,7 @@ namespace RestaurantRatingApp_V2.Models
             var restaurants = new List<Restaurant> {
                 new Restaurant
                     ("ta tria aderfia",
-                    ";alsjkhdg",CousineType.TYPE2),
+                    ";alsjkhdg",CousineType.Greek),
                 new Restaurant
                 {
 
