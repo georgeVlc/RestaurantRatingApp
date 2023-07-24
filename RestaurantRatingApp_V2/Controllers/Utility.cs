@@ -5,6 +5,9 @@ using System.Security.Cryptography;
 using System.Web;
 using System.Text;
 using RestaurantRatingApp_V2.Models;
+using System.Diagnostics;
+using RestaurantRatingApp_V2.Models.RestaurantRatingApp_V2.Models;
+
 
 namespace RestaurantRatingApp_V2.Controllers
 {
@@ -34,20 +37,125 @@ namespace RestaurantRatingApp_V2.Controllers
 
         public static void LoginUser(User user, String username, String pwd)
         {
-            // DBHandler.LoginUser
-            // update user info
+            try
+            {
+                (User, String) userData = DbAccess.SelectUser(username);
+                
+                if (!(userData.Item1 is null) && userData.Item2.Equals(pwd))
+                {
+                    user.SetAttr(VERIFICATION_CODE, "Username", username);
+                    user.SetAttr(VERIFICATION_CODE, "Type", userData.Item1.Type);
+                    user.SetAttr(VERIFICATION_CODE, "RestaurantName", userData.Item1.RestaurantName);
+                }
+                else
+                    throw new Exception("User not found");
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
         }
 
         public static void LogoutUser(User user)
         {
-            // DBHandler.LogoutUser
-            // update user info
+            try
+            {
+                (User, String) userData = DbAccess.SelectUser(user.Username);
+
+                if (userData.Item1.Username != String.Empty)
+                {
+                    user.SetAttr(VERIFICATION_CODE, "Username", String.Empty);
+                    user.SetAttr(VERIFICATION_CODE, "Type", User.UserType.GUEST);
+                    user.SetAttr(VERIFICATION_CODE, "RestaurantName", String.Empty);
+                }
+                else
+                    throw new Exception("User not found");
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
         }
 
         public static void SignUpUser(User user, String username, String pwd)
         {
-            // DBHandlr.SignUpUser
-            // update user info
+            try
+            {
+                DbAccess.InsertUser(username, pwd);
+                user.SetAttr(VERIFICATION_CODE, "Username", username);
+                user.SetAttr(VERIFICATION_CODE, "Type", User.UserType.SIGNED);
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+        }
+
+        public static void AddRestaurant(User user, Restaurant restaurant)
+        {
+            try
+            {
+                if (user.Type == User.UserType.GUEST)
+                    throw new Exception("Unauthorized action, you need to be SIGNED-IN to continue");
+
+                DbAccess.InsertRestaurant(restaurant);
+                user.SetAttr(VERIFICATION_CODE, "Type", "APPLICANT");
+                user.SetAttr(VERIFICATION_CODE, "RestaurantName", restaurant.Name);
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+        }
+
+        public static void RemoveRestaurant(User user, Restaurant restaurant)
+        {
+            try
+            {
+                if (!(user.Type == User.UserType.APPLICANT || user.Type == User.UserType.ADMIN))
+                    throw new Exception("You don't have a restaurant");
+
+                DbAccess.DeleteRestaurant(restaurant.Name);
+                user.SetAttr(VERIFICATION_CODE, "Type", "SIGNED");
+                user.SetAttr(VERIFICATION_CODE, "RestaurantName", String.Empty);
+                restaurant.Owner = String.Empty;
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+        }
+
+        public static void AddReview(User user, Review review)
+        {
+            try
+            {
+                if (user.Type == User.UserType.GUEST)
+                    throw new Exception("Unauthorized action, you need to be SIGNED-IN to continue");
+
+                DbAccess.InsertReview(review);
+                // update restaurant rating?
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+        }
+
+        public static void RemoveReview(User user, Review review)
+        {
+            try
+            {
+                if (user.Type == User.UserType.GUEST)
+                    throw new Exception("Unauthorized action, you need to be SIGNED-IN to continue");
+
+                DbAccess.DeleteReview(user.Username, review.RestaurantName);
+                // update restaurant rating?
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
         }
 
         public static StringBuilder MakeSearch(StringBuilder sb)

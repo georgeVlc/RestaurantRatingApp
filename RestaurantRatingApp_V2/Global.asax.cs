@@ -24,7 +24,7 @@ namespace RestaurantRatingApp_V2
             BundleConfig.RegisterBundles(BundleTable.Bundles);
 
             // Initialize the database.
-            Database.SetInitializer(new DatabaseInitializer());
+            //Database.SetInitializer(new DatabaseInitializer());
         }
     }
 }

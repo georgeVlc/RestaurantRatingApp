@@ -1,4 +1,4 @@
-﻿using RestaurantRatingApp_V2.Models.RestaurantRatingApp_V2.Models;
+﻿/*using RestaurantRatingApp_V2.Models.RestaurantRatingApp_V2.Models;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;
@@ -22,7 +22,11 @@ namespace RestaurantRatingApp_V2.Models
             var restaurants = new List<Restaurant> {
                 new Restaurant
                     ("ta tria aderfia",
+<<<<<<< HEAD
                     ";alsjkhdg",CousineType.Greek),
+=======
+                    ";alsjkhdg",CousineType.CONTEMPORARY),
+>>>>>>> 96349fe (added API functionality)
                 new Restaurant
                 {
 
@@ -65,4 +69,4 @@ namespace RestaurantRatingApp_V2.Models
             return users;
         }
     }
-}
+}*/
