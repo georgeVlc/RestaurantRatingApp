@@ -15,10 +15,10 @@ namespace RestaurantRatingApp_V2
     {
         protected void Page_Load(object sender, EventArgs e)
         {
-<<<<<<< HEAD
-
-=======
-            Test.SignUpUser("h_username", "4321");
+        }
+        protected void RunTests()
+        {
+            Test.SignUpUser("i_username", "4321");
             Test.LoginUser("a_username", "4321");
             Test.LogoutUser("a_username", "4321");
 
@@ -41,7 +41,6 @@ namespace RestaurantRatingApp_V2
             Test.MakeReview(testReviw);
             Test.RemoveReview(testReviw);
             Test.RemoveRestaurant(testRestaurant);
->>>>>>> 96349fe (added API functionality)
         }
     }
 }

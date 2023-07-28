@@ -64,31 +64,23 @@ namespace RestaurantRatingApp_V2.Models
                     connection.Open();
                     SqlCommand cm = new SqlCommand("select * from Users", connection);
                     SqlDataReader sdr = cm.ExecuteReader();
-                    
+
                     while (sdr.Read())
                     {
-<<<<<<< HEAD:RestaurantRatingApp_V2/Models/DbAccess.cs
                         User.UserType userType;
-                        Enum.TryParse<User.UserType>(sdr["type"].ToString(), out userType);
-                        UserList.Add(new User(sdr["name"].ToString(), userType));
-=======
-                        //System.Diagnostics.Debug.WriteLine(sdr["userName"].ToString());
-
-                        User.UserType userType;
-
                         Enum.TryParse<User.UserType>(sdr["userType"].ToString(), out userType);
 
                         userList.Add(
                             (
                                 new User(
-                                    sdr["userName"].ToString(), 
-                                    userType, 
+                                    sdr["userName"].ToString(),
+                                    userType,
                                     sdr["resName"].ToString()
                                 ),
                                 sdr["userPwd"].ToString()
                             )
                         );
->>>>>>> 96349fe (added API functionality):RestaurantRatingApp_V2/Models/dbAccess.cs
+
                     }
                 }
             }
@@ -105,17 +97,7 @@ namespace RestaurantRatingApp_V2.Models
         public static List<Restaurant> SelectRestaurants()
         {
             List<Restaurant> RestaurantList = new List<Restaurant>();
-<<<<<<< HEAD:RestaurantRatingApp_V2/Models/DbAccess.cs
-            var cousineType = new Dictionary<string, CousineType>(){
-            {"Italian", CousineType.Italian},
-            {"contemporary", CousineType.contemporary},
-            {"Greek", CousineType.Greek},
-            {"Asian", CousineType.Asian},
-            {"Mexican", CousineType.Mexican}
-            };
-=======
 
->>>>>>> 96349fe (added API functionality):RestaurantRatingApp_V2/Models/dbAccess.cs
             try
             {
                 string ConString = ConfigurationManager.ConnectionStrings["RestaurantRatingApp"].ConnectionString;
@@ -132,10 +114,6 @@ namespace RestaurantRatingApp_V2.Models
 
                     while (sdr.Read())
                     {
-<<<<<<< HEAD:RestaurantRatingApp_V2/Models/DbAccess.cs
-                        CousineType type = cousineType[sdr["type"].ToString()];
-                        RestaurantList.Add(new Restaurant(sdr["name"].ToString(), sdr["imageName"].ToString(), type));
-=======
                         RestaurantList.Add(
                             new Restaurant(
                                 sdr["resName"].ToString(), 
@@ -145,7 +123,6 @@ namespace RestaurantRatingApp_V2.Models
                                 sdr["resOwner"].ToString()
                             )
                         );
->>>>>>> 96349fe (added API functionality):RestaurantRatingApp_V2/Models/dbAccess.cs
                     }
                 }
             }
@@ -172,11 +149,7 @@ namespace RestaurantRatingApp_V2.Models
                     connection.Open();
                     SqlCommand cm = new SqlCommand("select * from Reviews", connection);
                     SqlDataReader sdr = cm.ExecuteReader();
-<<<<<<< HEAD:RestaurantRatingApp_V2/Models/DbAccess.cs
-                    System.Diagnostics.Debug.WriteLine("Reviews selection was successfull");
-=======
-                    
->>>>>>> 96349fe (added API functionality):RestaurantRatingApp_V2/Models/dbAccess.cs
+
                     while (sdr.Read())
                     {
                         ReviewsList.Add(
@@ -243,10 +216,6 @@ namespace RestaurantRatingApp_V2.Models
                     SqlCommand cm = new SqlCommand("delete from Users where userName='" + name + "';", connection);
                     // Executing the SQL query  
                     SqlDataReader sdr = cm.ExecuteReader();
-<<<<<<< HEAD:RestaurantRatingApp_V2/Models/DbAccess.cs
-                    System.Diagnostics.Debug.WriteLine("Delete user was succesfull");
-=======
->>>>>>> 96349fe (added API functionality):RestaurantRatingApp_V2/Models/dbAccess.cs
                 }
             }
             catch (Exception e)

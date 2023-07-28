@@ -98,8 +98,13 @@ namespace RestaurantRatingApp_V2.Controllers
                 if (user.Type == User.UserType.GUEST)
                     throw new Exception("Unauthorized action, you need to be SIGNED-IN to continue");
 
+                if (!user.RestaurantName.Equals(restaurant.Name))
+                    throw new Exception("Invalid operation, restaurant " + restaurant.Name + " is under different ownership");
+
                 DbAccess.InsertRestaurant(restaurant);
-                user.SetAttr(VERIFICATION_CODE, "Type", "APPLICANT");
+                
+                if (user.Type != User.UserType.ADMIN)
+                    user.SetAttr(VERIFICATION_CODE, "Type", "APPLICANT");
                 user.SetAttr(VERIFICATION_CODE, "RestaurantName", restaurant.Name);
             }
             catch (Exception e)
@@ -115,8 +120,13 @@ namespace RestaurantRatingApp_V2.Controllers
                 if (!(user.Type == User.UserType.APPLICANT || user.Type == User.UserType.ADMIN))
                     throw new Exception("You don't have a restaurant");
 
+                if (!(user.RestaurantName.Equals(restaurant.Name)))
+                    throw new Exception("Invalid operation, restaurant " + restaurant.Name + " is under different ownership");
+
                 DbAccess.DeleteRestaurant(restaurant.Name);
-                user.SetAttr(VERIFICATION_CODE, "Type", "SIGNED");
+
+                if (user.Type != User.UserType.ADMIN)
+                    user.SetAttr(VERIFICATION_CODE, "Type", "SIGNED");
                 user.SetAttr(VERIFICATION_CODE, "RestaurantName", String.Empty);
                 restaurant.Owner = String.Empty;
             }
