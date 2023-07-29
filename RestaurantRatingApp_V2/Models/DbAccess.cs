@@ -13,14 +13,41 @@ namespace RestaurantRatingApp_V2.Models
 {
     public class DbAccess
     {
+        public static void UpdateRestaurantRating(String restaurantName)
+        {
+            try
+            {
+                string conString = ConfigurationManager.ConnectionStrings["RestaurantRatingApp"].ConnectionString;
+
+                using (SqlConnection connection = new SqlConnection(conString))
+                {
+                    connection.Open();
+                    SqlCommand cm = new SqlCommand(
+                        "update Restaurant set Restaurant.resRating = t.avg_rating " +
+                        "from ( select Reviews.resName, avg(Reviews.revRating ) as avg_rating " +
+                        "from Reviews where Reviews.resName like '" + restaurantName + 
+                        "' group by Reviews.resName ) t " +
+                        "where t.resName = Restaurant.resName;",
+                        connection
+                    );
+
+                    SqlDataReader sdr = cm.ExecuteReader();
+                }
+            }
+            catch (Exception e)
+            {
+                e.Data.Add("UserMessage", "An error occured while updating Restaurant " + restaurantName + " rating");
+                throw e;
+            }
+        }
 
         public static (User, String) SelectUser(String username)
         {
             try
             {
-                string ConString = ConfigurationManager.ConnectionStrings["RestaurantRatingApp"].ConnectionString;
+                string conString = ConfigurationManager.ConnectionStrings["RestaurantRatingApp"].ConnectionString;
 
-                using (SqlConnection connection = new SqlConnection(ConString))
+                using (SqlConnection connection = new SqlConnection(conString))
                 {
                     connection.Open();
                     SqlCommand cm = new SqlCommand("select * from Users where userName='" + username + "';", connection);
@@ -45,7 +72,6 @@ namespace RestaurantRatingApp_V2.Models
             }
             catch (Exception e)
             {
-                System.Diagnostics.Debug.WriteLine("OOPs, something went wrong.\n" + e);
                 e.Data.Add("UserMessage", "An error occured while reading user data");
                 throw e;
             }
@@ -57,9 +83,9 @@ namespace RestaurantRatingApp_V2.Models
 
             try
             {
-                string ConString = ConfigurationManager.ConnectionStrings["RestaurantRatingApp"].ConnectionString;
+                string conString = ConfigurationManager.ConnectionStrings["RestaurantRatingApp"].ConnectionString;
 
-                using (SqlConnection connection = new SqlConnection(ConString))
+                using (SqlConnection connection = new SqlConnection(conString))
                 {
                     connection.Open();
                     SqlCommand cm = new SqlCommand("select * from Users", connection);
@@ -86,7 +112,6 @@ namespace RestaurantRatingApp_V2.Models
             }
             catch (Exception e)
             {
-                System.Diagnostics.Debug.WriteLine("OOPs, something went wrong.\n" + e);
                 e.Data.Add("UserMessage", "An error occured while reading user data");
                 throw e;
             }
@@ -100,9 +125,9 @@ namespace RestaurantRatingApp_V2.Models
 
             try
             {
-                string ConString = ConfigurationManager.ConnectionStrings["RestaurantRatingApp"].ConnectionString;
+                string conString = ConfigurationManager.ConnectionStrings["RestaurantRatingApp"].ConnectionString;
                 
-                using (SqlConnection connection = new SqlConnection(ConString))
+                using (SqlConnection connection = new SqlConnection(conString))
                 {
                     connection.Open();
                     SqlCommand cm = new SqlCommand("select * from Restaurant", connection);
@@ -128,7 +153,6 @@ namespace RestaurantRatingApp_V2.Models
             }
             catch (Exception e)
             {
-                System.Diagnostics.Debug.WriteLine("OOPs, something went wrong.\n" + e);
                 e.Data.Add("UserMessage", "An error occured while reading restuarant data");
                 throw e;
             }
@@ -142,9 +166,9 @@ namespace RestaurantRatingApp_V2.Models
 
             try
             {
-                string ConString = ConfigurationManager.ConnectionStrings["RestaurantRatingApp"].ConnectionString;
+                string conString = ConfigurationManager.ConnectionStrings["RestaurantRatingApp"].ConnectionString;
 
-                using (SqlConnection connection = new SqlConnection(ConString))
+                using (SqlConnection connection = new SqlConnection(conString))
                 {
                     connection.Open();
                     SqlCommand cm = new SqlCommand("select * from Reviews", connection);
@@ -164,7 +188,6 @@ namespace RestaurantRatingApp_V2.Models
             }
             catch (Exception e)
             {
-                System.Diagnostics.Debug.WriteLine("OOPs, something went wrong.\n" + e);
                 e.Data.Add("UserMessage", "An error occured while reading review data");
             }
 
@@ -175,16 +198,16 @@ namespace RestaurantRatingApp_V2.Models
         {
             try
             {
-                string ConString = ConfigurationManager.ConnectionStrings["RestaurantRatingApp"].ConnectionString;
+                string conString = ConfigurationManager.ConnectionStrings["RestaurantRatingApp"].ConnectionString;
 
-                using (SqlConnection connection = new SqlConnection(ConString))
+                using (SqlConnection connection = new SqlConnection(conString))
                 {
                     connection.Open();
                     SqlCommand cm = new SqlCommand("delete from Restaurant where resName='" + restaurantName + "';", connection);
                     SqlDataReader sdr = cm.ExecuteReader();
                 }
 
-                using (SqlConnection connection = new SqlConnection(ConString))
+                using (SqlConnection connection = new SqlConnection(conString))
                 {
                     connection.Open();
                     SqlCommand cm = new SqlCommand(
@@ -197,7 +220,6 @@ namespace RestaurantRatingApp_V2.Models
             }
             catch (Exception e)
             {
-                System.Diagnostics.Debug.WriteLine("OOPs, something went wrong.\n" + e);
                 e.Data.Add("UserMessage", "An error occured while attempting to delete restaurant");
                 throw e;
             }
@@ -207,8 +229,8 @@ namespace RestaurantRatingApp_V2.Models
         {
             try
             {
-                string ConString = ConfigurationManager.ConnectionStrings["RestaurantRatingApp"].ConnectionString;
-                using (SqlConnection connection = new SqlConnection(ConString))
+                string conString = ConfigurationManager.ConnectionStrings["RestaurantRatingApp"].ConnectionString;
+                using (SqlConnection connection = new SqlConnection(conString))
                 {
                     // Opening Connection  
                     connection.Open();
@@ -220,7 +242,6 @@ namespace RestaurantRatingApp_V2.Models
             }
             catch (Exception e)
             {
-                System.Diagnostics.Debug.WriteLine("OOPs, something went wrong.\n" + e);
                 e.Data.Add("UserMessage", "An error occured while attempting to delete user");
                 throw e;
             }
@@ -230,9 +251,9 @@ namespace RestaurantRatingApp_V2.Models
         {
             try
             {
-                string ConString = ConfigurationManager.ConnectionStrings["RestaurantRatingApp"].ConnectionString;
+                string conString = ConfigurationManager.ConnectionStrings["RestaurantRatingApp"].ConnectionString;
 
-                using (SqlConnection connection = new SqlConnection(ConString))
+                using (SqlConnection connection = new SqlConnection(conString))
                 {
                     connection.Open();
                     SqlCommand cm = new SqlCommand("delete from Reviews where userName='" + userName + "' and resName='" + restaurant + "';", connection);
@@ -241,19 +262,20 @@ namespace RestaurantRatingApp_V2.Models
             }
             catch (Exception e)
             {
-                System.Diagnostics.Debug.WriteLine("OOPs, something went wrong.\n" + e);
                 e.Data.Add("UserMessage", "An error occured while attempting to delete review");
                 throw e;
             }
+
+            UpdateRestaurantRating(restaurant);
         }
 
         public static void InsertRestaurant(Restaurant r)
         {
             try
             {
-                string ConString = ConfigurationManager.ConnectionStrings["RestaurantRatingApp"].ConnectionString;
+                string conString = ConfigurationManager.ConnectionStrings["RestaurantRatingApp"].ConnectionString;
 
-                using (SqlConnection connection = new SqlConnection(ConString))
+                using (SqlConnection connection = new SqlConnection(conString))
                 {
                     connection.Open();
 
@@ -271,7 +293,7 @@ namespace RestaurantRatingApp_V2.Models
                     System.Diagnostics.Debug.WriteLine("Restaurant insert was successful");
                 }
 
-                using (SqlConnection connection = new SqlConnection(ConString))
+                using (SqlConnection connection = new SqlConnection(conString))
                 {
                     connection.Open();
 
@@ -287,7 +309,6 @@ namespace RestaurantRatingApp_V2.Models
             }
             catch (Exception e)
             {
-                System.Diagnostics.Debug.WriteLine("OOPs, something went wrong.\n" + e);
                 e.Data.Add("UserMessage", "An error occured while attempting to insert restaurant");
                 throw e;
             }
@@ -297,9 +318,9 @@ namespace RestaurantRatingApp_V2.Models
         {
             try
             {
-                string ConString = ConfigurationManager.ConnectionStrings["RestaurantRatingApp"].ConnectionString;
+                string conString = ConfigurationManager.ConnectionStrings["RestaurantRatingApp"].ConnectionString;
 
-                using (SqlConnection connection = new SqlConnection(ConString))
+                using (SqlConnection connection = new SqlConnection(conString))
                 {
                     connection.Open();
 
@@ -314,18 +335,19 @@ namespace RestaurantRatingApp_V2.Models
             }
             catch (Exception e)
             {
-                System.Diagnostics.Debug.WriteLine("OOPs, something went wrong.\n" + e);
                 e.Data.Add("UserMessage", "An error occured while attempting to insert review");
                 throw e;
             }
+
+            UpdateRestaurantRating(r.RestaurantName);
         }
 
         public static void InsertUser(String username, String pwd)
         {
             try
             {
-                string ConString = ConfigurationManager.ConnectionStrings["RestaurantRatingApp"].ConnectionString;
-                using (SqlConnection connection = new SqlConnection(ConString))
+                string conString = ConfigurationManager.ConnectionStrings["RestaurantRatingApp"].ConnectionString;
+                using (SqlConnection connection = new SqlConnection(conString))
                 {
                     
                     connection.Open();
@@ -341,7 +363,6 @@ namespace RestaurantRatingApp_V2.Models
             }
             catch (Exception e)
             {
-                System.Diagnostics.Debug.WriteLine("OOPs, something went wrong.\n" + e);
                 e.Data.Add("UserMessage", "An error occured while attempting to insert user");
                 throw e;
             }

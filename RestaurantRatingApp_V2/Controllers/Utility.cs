@@ -98,8 +98,8 @@ namespace RestaurantRatingApp_V2.Controllers
                 if (user.Type == User.UserType.GUEST)
                     throw new Exception("Unauthorized action, you need to be SIGNED-IN to continue");
 
-                if (!user.RestaurantName.Equals(restaurant.Name))
-                    throw new Exception("Invalid operation, restaurant " + restaurant.Name + " is under different ownership");
+                //if (!user.RestaurantName.Equals(restaurant.Name))
+                    //throw new Exception("Invalid operation, restaurant " + restaurant.Name + " is under different ownership");
 
                 DbAccess.InsertRestaurant(restaurant);
                 
