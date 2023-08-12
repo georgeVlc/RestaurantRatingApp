@@ -35,6 +35,24 @@ namespace RestaurantRatingApp_V2.Controllers
         // is used as request API for given actions related to parameter settings
         public static bool VerifyAction(uint authCode) { return authCode == VERIFICATION_CODE; }
 
+        public static List<User> GetUsers(int numOfUsers)
+        {
+            try
+            {
+                List<(User, string)> usersData = DbAccess.SelectUsers(numOfUsers);
+                List<User> users = new List<User>();
+                
+                foreach ((User, string) item in usersData)
+                    users.Add(item.Item1);
+
+                return users;
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+        }
+
         public static void LoginUser(User user, String username, String pwd)
         {
             try

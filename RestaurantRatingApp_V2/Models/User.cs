@@ -75,6 +75,17 @@ namespace RestaurantRatingApp_V2.Models
 
         // functionalities
 
+        public List<User> GetUsers(int numOfUsers=-1)
+        {
+            try
+            {
+                List<User> users = Utility.GetUsers(numOfUsers);
+                
+                return users;                
+            }
+            catch (Exception e) { throw e; };
+        }
+
         public bool Login(String username, String pwd)
         {
             try { Utility.LoginUser(this, username, pwd); return true; }

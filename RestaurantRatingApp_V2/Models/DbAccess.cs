@@ -77,7 +77,7 @@ namespace RestaurantRatingApp_V2.Models
             }
         }
 
-        public static List<(User, String)> SelecAlltUsers()
+        public static List<(User, String)> SelectUsers(int numOfUsers)
         {
             List<(User, String)> userList = new List<(User, String)>();
 
@@ -88,7 +88,12 @@ namespace RestaurantRatingApp_V2.Models
                 using (SqlConnection connection = new SqlConnection(conString))
                 {
                     connection.Open();
-                    SqlCommand cm = new SqlCommand("select * from Users", connection);
+
+                    string cmdText = numOfUsers == -1 ? 
+                        "select * from Users;" : 
+                        "select * from Users limit " + numOfUsers.ToString() + ";";
+                    
+                    SqlCommand cm = new SqlCommand(cmdText, connection);
                     SqlDataReader sdr = cm.ExecuteReader();
 
                     while (sdr.Read())
