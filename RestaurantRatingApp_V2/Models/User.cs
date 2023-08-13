@@ -78,12 +78,14 @@ namespace RestaurantRatingApp_V2.Models
         public List<User> GetUsers(int numOfUsers=-1)
         {
             try
-            {
-                List<User> users = Utility.GetUsers(numOfUsers);
-                
-                return users;                
-            }
+            { List<User> users = Utility.GetUsers(this, numOfUsers); return users; }
             catch (Exception e) { throw e; };
+        }
+
+        public List<Restaurant> GerRestaurantsByCousine(Restaurant.CousineType cousineType, int numOfRestaurants=-1)
+        {
+            try { List<Restaurant> restaurants = Utility.GetRestaurantsByCousine(cousineType, numOfRestaurants); return restaurants; }
+            catch (Exception e) { throw e; }
         }
 
         public bool Login(String username, String pwd)
@@ -107,7 +109,7 @@ namespace RestaurantRatingApp_V2.Models
         void MakeSearch(StringBuilder sb)
         {
             var results = Utility.MakeSearch(sb);
-            // display or pass results to view/despayer
+            // display or pass results to view/displayer
         }
 
         public bool AddRestaurant(Restaurant restaurant)

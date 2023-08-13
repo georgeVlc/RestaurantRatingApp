@@ -27,8 +27,6 @@ namespace RestaurantRatingApp_V2
             const uint numOfCells = 3;
 
             this.InitTable(numOfRows, numOfCells);
-
-            //Debug.WriteLine(this.Table1.Rows.Count.ToString() + ", " + this.Table1.Rows[0].Cells.Count.ToString());
         }
 
         private void InitTable(uint numOfRows, uint numOfCells)
@@ -60,14 +58,18 @@ namespace RestaurantRatingApp_V2
         }
         protected void Button1_Click(object sender, EventArgs e)
         {
-            List<User> users = this.user.GetUsers();
-
-            for (int i = 0; i < this.Table1.Rows.Count; ++i)
+            try
             {
-                this.Table1.Rows[i].Cells[0].Text = users[i].Username;
-                this.Table1.Rows[i].Cells[1].Text = users[i].Type.ToString();
-                this.Table1.Rows[i].Cells[2].Text = users[i].RestaurantName;
+                List<User> users = this.user.GetUsers();
+
+                for (int i = 0; i < this.Table1.Rows.Count; ++i)
+                {
+                    this.Table1.Rows[i].Cells[0].Text = users[i].Username;
+                    this.Table1.Rows[i].Cells[1].Text = users[i].Type.ToString();
+                    this.Table1.Rows[i].Cells[2].Text = users[i].RestaurantName;
+                }
             }
+            catch (Exception) {  }
         }
 
         protected void RunTests()

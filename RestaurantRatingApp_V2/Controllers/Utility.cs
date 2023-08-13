@@ -17,7 +17,7 @@ namespace RestaurantRatingApp_V2.Controllers
         // generated in runtime
         private static uint VERIFICATION_CODE = GenHashAsUint();
 
-        // creates a byte array of sizeInKn*1024 random values
+        // creates a byte array of sizeInKb * 1024 random values
         private static byte[] GetByteArray(uint sizeInKb)
         {
             Random rnd = new Random();
@@ -35,8 +35,11 @@ namespace RestaurantRatingApp_V2.Controllers
         // is used as request API for given actions related to parameter settings
         public static bool VerifyAction(uint authCode) { return authCode == VERIFICATION_CODE; }
 
-        public static List<User> GetUsers(int numOfUsers)
+        public static List<User> GetUsers(User user, int numOfUsers)
         {
+            if (user.Type != User.UserType.ADMIN)
+                throw new Exception("Unauthorized action, only ADMIN can perform this action");
+
             try
             {
                 List<(User, string)> usersData = DbAccess.SelectUsers(numOfUsers);
@@ -51,6 +54,12 @@ namespace RestaurantRatingApp_V2.Controllers
             {
                 throw e;
             }
+        }
+
+        public static List<Restaurant> GetRestaurantsByCousine(Restaurant.CousineType cousineType, int numOfRestaurants)
+        {
+            try { List<Restaurant> restaurants = DbAccess.SelectRestaurantsByCousine(cousineType, numOfRestaurants); return restaurants; }
+            catch (Exception e) { throw e; }
         }
 
         public static void LoginUser(User user, String username, String pwd)

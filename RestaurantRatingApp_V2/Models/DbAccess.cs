@@ -126,7 +126,7 @@ namespace RestaurantRatingApp_V2.Models
 
         public static List<Restaurant> SelectRestaurants()
         {
-            List<Restaurant> RestaurantList = new List<Restaurant>();
+            List<Restaurant> restaurantList = new List<Restaurant>();
 
             try
             {
@@ -144,7 +144,7 @@ namespace RestaurantRatingApp_V2.Models
 
                     while (sdr.Read())
                     {
-                        RestaurantList.Add(
+                        restaurantList.Add(
                             new Restaurant(
                                 sdr["resName"].ToString(), 
                                 sdr["resImgName"].ToString(), 
@@ -162,7 +162,49 @@ namespace RestaurantRatingApp_V2.Models
                 throw e;
             }
 
-            return RestaurantList;
+            return restaurantList;
+        }
+
+        public static List<Restaurant> SelectRestaurantsByCousine(Restaurant.CousineType cousineType, int numOfRestaurants)
+        {
+            List<Restaurant> restaurantList = new List<Restaurant>();
+
+            try
+            {
+                string conString = ConfigurationManager.ConnectionStrings["RestaurantRatingApp"].ConnectionString;
+
+                using (SqlConnection connection = new SqlConnection(conString))
+                {
+                    connection.Open();
+
+                    string cmdText = numOfRestaurants == -1 ?
+                        "select * from Restaurant where Restaurant.resType = '" + cousineType.ToString() + "';" :
+                        "select * from Restaurant where Restaurant.resType = '" + cousineType.ToString() + "' limit " + numOfRestaurants + ";";
+                    
+                    SqlCommand cm = new SqlCommand(cmdText, connection);
+                    SqlDataReader sdr = cm.ExecuteReader();
+
+                    while (sdr.Read())
+                    {
+                        restaurantList.Add(
+                            new Restaurant(
+                                sdr["resName"].ToString(),
+                                sdr["resImgName"].ToString(),
+                                cousineType,
+                                sdr["resDescription"].ToString(),
+                                sdr["resOwner"].ToString()
+                            )
+                        );
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                e.Data.Add("UserMessage", "An error occured while reading restuarant data");
+                throw e;
+            }
+
+            return restaurantList;
         }
 
         public static List<Review> SelectReviews()
