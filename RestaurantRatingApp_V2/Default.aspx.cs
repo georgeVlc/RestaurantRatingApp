@@ -22,11 +22,17 @@ namespace RestaurantRatingApp_V2
             //RunTests();
 
             this.user = new User();
+            this.LoginAdmin();
 
             const uint numOfRows = 3;
             const uint numOfCells = 3;
 
             this.InitTable(numOfRows, numOfCells);
+        }
+
+        private void LoginAdmin()
+        {
+            this.user.Login("admin_user", "1234");
         }
 
         private void InitTable(uint numOfRows, uint numOfCells)

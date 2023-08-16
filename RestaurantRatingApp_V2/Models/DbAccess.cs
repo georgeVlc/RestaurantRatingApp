@@ -124,7 +124,7 @@ namespace RestaurantRatingApp_V2.Models
             return userList;
         }
 
-        public static List<Restaurant> SelectRestaurants()
+        public static List<Restaurant> SelectRestaurants(int numOfRestaurants)
         {
             List<Restaurant> restaurantList = new List<Restaurant>();
 
@@ -135,7 +135,12 @@ namespace RestaurantRatingApp_V2.Models
                 using (SqlConnection connection = new SqlConnection(conString))
                 {
                     connection.Open();
-                    SqlCommand cm = new SqlCommand("select * from Restaurant", connection);
+
+                    string cmdText = numOfRestaurants == -1 ?
+                        "select * from Restaurant;" :
+                        "select * from Restaurant limit " + numOfRestaurants.ToString() + " ;";
+
+                    SqlCommand cm = new SqlCommand(cmdText, connection);
                     SqlDataReader sdr = cm.ExecuteReader();
 
                     Restaurant.CousineType cousineType;
@@ -207,23 +212,27 @@ namespace RestaurantRatingApp_V2.Models
             return restaurantList;
         }
 
-        public static List<Review> SelectReviews()
+        public static List<Review> SelectReviews(int numOfReviews)
         {
-            List<Review> ReviewsList = new List<Review>();
+            List<Review> reviewsList = new List<Review>();
 
             try
             {
                 string conString = ConfigurationManager.ConnectionStrings["RestaurantRatingApp"].ConnectionString;
+                string cmdText = numOfReviews == -1 ?
+                    "select * from Reviews;" :
+                    "select * from Reviews limit " + numOfReviews.ToString() + " ;";
+
 
                 using (SqlConnection connection = new SqlConnection(conString))
                 {
                     connection.Open();
-                    SqlCommand cm = new SqlCommand("select * from Reviews", connection);
+                    SqlCommand cm = new SqlCommand(cmdText, connection);
                     SqlDataReader sdr = cm.ExecuteReader();
 
                     while (sdr.Read())
                     {
-                        ReviewsList.Add(
+                        reviewsList.Add(
                             new Review(
                                 sdr["userName"].ToString(), 
                                 sdr["resName"].ToString(), 
@@ -238,7 +247,84 @@ namespace RestaurantRatingApp_V2.Models
                 e.Data.Add("UserMessage", "An error occured while reading review data");
             }
 
-            return ReviewsList;
+            return reviewsList;
+        }
+
+
+        public static List<Review> SelectReviewsByUsername(string username, int numOfReviews)
+        {
+            List<Review> reviewsList = new List<Review>();
+
+            try
+            {
+                string conString = ConfigurationManager.ConnectionStrings["RestaurantRatingApp"].ConnectionString;
+                string cmdText = numOfReviews == -1 ?
+                    "select * from Reviews where Reviews.userName = '" + username + "';" :
+                    "select * from Reviews where Reviews.userName = '" + username + "' limit " + numOfReviews.ToString() + ";";
+
+
+                using (SqlConnection connection = new SqlConnection(conString))
+                {
+                    connection.Open();
+                    SqlCommand cm = new SqlCommand(cmdText, connection);
+                    SqlDataReader sdr = cm.ExecuteReader();
+
+                    while (sdr.Read())
+                    {
+                        reviewsList.Add(
+                            new Review(
+                                sdr["userName"].ToString(),
+                                sdr["resName"].ToString(),
+                                float.Parse(sdr["revRating"].ToString())
+                            )
+                        );
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                e.Data.Add("UserMessage", "An error occured while reading review data");
+            }
+
+            return reviewsList;
+        }
+
+        public static List<Review> SelectReviewsByRestaurantName(string restaurantName, int numOfReviews)
+        {
+            List<Review> reviewsList = new List<Review>();
+
+            try
+            {
+                string conString = ConfigurationManager.ConnectionStrings["RestaurantRatingApp"].ConnectionString;
+                string cmdText = numOfReviews == -1 ?
+                    "select * from Reviews where Reviews.resName = '" + restaurantName + "';" :
+                    "select * from Reviews where Reviews.resName = '" + restaurantName + "' limit " + numOfReviews.ToString() + ";";
+
+
+                using (SqlConnection connection = new SqlConnection(conString))
+                {
+                    connection.Open();
+                    SqlCommand cm = new SqlCommand(cmdText, connection);
+                    SqlDataReader sdr = cm.ExecuteReader();
+
+                    while (sdr.Read())
+                    {
+                        reviewsList.Add(
+                            new Review(
+                                sdr["userName"].ToString(),
+                                sdr["resName"].ToString(),
+                                float.Parse(sdr["revRating"].ToString())
+                            )
+                        );
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                e.Data.Add("UserMessage", "An error occured while reading review data");
+            }
+
+            return reviewsList;
         }
 
         public static void DeleteRestaurant(string restaurantName)

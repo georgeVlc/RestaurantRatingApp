@@ -77,15 +77,38 @@ namespace RestaurantRatingApp_V2.Models
 
         public List<User> GetUsers(int numOfUsers=-1)
         {
-            try
-            { List<User> users = Utility.GetUsers(this, numOfUsers); return users; }
+            try { List<User> users = Utility.GetUsers(this, numOfUsers); return users; }
             catch (Exception e) { throw e; };
         }
 
-        public List<Restaurant> GerRestaurantsByCousine(Restaurant.CousineType cousineType, int numOfRestaurants=-1)
+        public List<Restaurant> GetRestaurants(int numOfRestaurants=-1)
         {
-            try { List<Restaurant> restaurants = Utility.GetRestaurantsByCousine(cousineType, numOfRestaurants); return restaurants; }
+            try { List<Restaurant> restaurants = Utility.GetRestaurants(this, numOfRestaurants); return restaurants; }
+            catch (Exception e) { throw e; };
+        }
+
+        public List<Restaurant> GetRestaurantsByCousine(Restaurant.CousineType cousineType, int numOfRestaurants=-1)
+        {
+            try { List<Restaurant> restaurants = Utility.GetRestaurantsByCousine(this, cousineType, numOfRestaurants); return restaurants; }
             catch (Exception e) { throw e; }
+        }
+
+        public List<Review> GetReviews(int numOfReviews=-1)
+        {
+            try { List<Review> reviews = Utility.GetReviews(this, numOfReviews); return reviews; }
+            catch (Exception e) { throw e; };
+        }
+
+        public List<Review> GetReviewsByUsername(string username, int numOfReviews=-1)
+        {
+            try { List<Review> reviews = Utility.GetReviewsByUsername(this, username, numOfReviews); return reviews; }
+            catch (Exception e) { throw e; };
+        }
+
+        public List<Review> GetReviewsByRestaurantName(string restaurantName, int numOfRestaurants=-1)
+        {
+            try { List<Review> reviews = Utility.GetReviewsByRestaurantName(this, restaurantName, numOfRestaurants); return reviews; }
+            catch (Exception e) { throw e; };
         }
 
         public bool Login(String username, String pwd)
