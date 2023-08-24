@@ -58,45 +58,30 @@ namespace RestaurantRatingApp_V2.Controllers
 
         public static List<Restaurant> GetRestaurants(User user, int numOfRestaurants)
         {
-            if (user.Type != User.UserType.ADMIN)
-                throw new Exception("Unauthorized action, only ADMIN can perform this action");
-
             try { List<Restaurant> restaurants = DbAccess.SelectRestaurants(numOfRestaurants); return restaurants; }
             catch (Exception e) { throw e; }
         }
 
         public static List<Restaurant> GetRestaurantsByCousine(User user, Restaurant.CousineType cousineType, int numOfRestaurants)
         {
-            if (user.Type != User.UserType.ADMIN)
-                throw new Exception("Unauthorized action, only ADMIN can perform this action");
-
             try { List<Restaurant> restaurants = DbAccess.SelectRestaurantsByCousine(cousineType, numOfRestaurants); return restaurants; }
             catch (Exception e) { throw e; }
         }
 
-        public static List<Review> GetReviews(User user, int numOfReviews)
+        public static List<Review> GetReviews(int numOfReviews)
         {
-            if (user.Type != User.UserType.ADMIN)
-                throw new Exception("Unauthorized action, only ADMIN can perform this action");
-
             try { List<Review> reviews = DbAccess.SelectReviews(numOfReviews); return reviews; }
             catch (Exception e) { throw e; }
         }
 
-        public static List<Review> GetReviewsByUsername(User user, string username, int numOfReviews)
+        public static List<Review> GetReviewsByUsername(string username, int numOfReviews)
         {
-            if (user.Type != User.UserType.ADMIN)
-                throw new Exception("Unauthorized action, only ADMIN can perform this action");
-
             try { List<Review> reviews = DbAccess.SelectReviewsByUsername(username, numOfReviews); return reviews; }
             catch (Exception e) { throw e; };
         }
 
-        public static List<Review> GetReviewsByRestaurantName(User user, string restaurantName, int numOfReviews)
+        public static List<Review> GetReviewsByRestaurantName(string restaurantName, int numOfReviews)
         {
-            if (user.Type != User.UserType.ADMIN)
-                throw new Exception("Unauthorized action, only ADMIN can perform this action");
-
             try { List<Review> reviews = DbAccess.SelectReviewsByRestaurantName(restaurantName, numOfReviews); return reviews; }
             catch (Exception e) { throw e; };
         }

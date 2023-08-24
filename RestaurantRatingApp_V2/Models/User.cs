@@ -95,19 +95,19 @@ namespace RestaurantRatingApp_V2.Models
 
         public List<Review> GetReviews(int numOfReviews=-1)
         {
-            try { List<Review> reviews = Utility.GetReviews(this, numOfReviews); return reviews; }
+            try { List<Review> reviews = Utility.GetReviews(numOfReviews); return reviews; }
             catch (Exception e) { throw e; };
         }
 
         public List<Review> GetReviewsByUsername(string username, int numOfReviews=-1)
         {
-            try { List<Review> reviews = Utility.GetReviewsByUsername(this, username, numOfReviews); return reviews; }
+            try { List<Review> reviews = Utility.GetReviewsByUsername(username, numOfReviews); return reviews; }
             catch (Exception e) { throw e; };
         }
 
         public List<Review> GetReviewsByRestaurantName(string restaurantName, int numOfRestaurants=-1)
         {
-            try { List<Review> reviews = Utility.GetReviewsByRestaurantName(this, restaurantName, numOfRestaurants); return reviews; }
+            try { List<Review> reviews = Utility.GetReviewsByRestaurantName(restaurantName, numOfRestaurants); return reviews; }
             catch (Exception e) { throw e; };
         }
 

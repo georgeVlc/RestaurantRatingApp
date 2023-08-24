@@ -28,6 +28,11 @@ namespace RestaurantRatingApp_V2
             const uint numOfCells = 3;
 
             this.InitTable(numOfRows, numOfCells);
+
+            List<String> cousineTypesAsStrings = Restaurant.GetCousineTypes().ConvertAll(x => x.ToString());
+
+            //this.TextBox1.Text = string.Join( ",", Restaurant.GetCousineTypes().Skip(1));
+            this.TextBox1.Text = string.Join(",", cousineTypesAsStrings.Skip(1));
         }
 
         private void LoginAdmin()
