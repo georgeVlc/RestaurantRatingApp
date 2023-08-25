@@ -145,17 +145,19 @@ namespace RestaurantRatingApp_V2.Models
 
                     Restaurant.CousineType cousineType;
 
-                    Enum.TryParse<Restaurant.CousineType>(sdr["resType"].ToString(), out cousineType);
 
                     while (sdr.Read())
                     {
+                        Enum.TryParse<Restaurant.CousineType>(sdr["resType"].ToString(), out cousineType);
+    
                         restaurantList.Add(
                             new Restaurant(
                                 sdr["resName"].ToString(), 
                                 sdr["resImgName"].ToString(), 
                                 cousineType,
                                 sdr["resDescription"].ToString(),
-                                sdr["resOwner"].ToString()
+                                sdr["resOwner"].ToString(),
+                                float.Parse(sdr["resRating"].ToString())
                             )
                         );
                     }
@@ -197,7 +199,8 @@ namespace RestaurantRatingApp_V2.Models
                                 sdr["resImgName"].ToString(),
                                 cousineType,
                                 sdr["resDescription"].ToString(),
-                                sdr["resOwner"].ToString()
+                                sdr["resOwner"].ToString(),
+                                float.Parse(sdr["resRating"].ToString())
                             )
                         );
                     }

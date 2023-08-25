@@ -24,10 +24,8 @@ namespace RestaurantRatingApp_V2
             this.user = new User();
             this.LoginAdmin();
 
-            const uint numOfRows = 3;
-            const uint numOfCells = 3;
-
-            this.InitTable(numOfRows, numOfCells);
+            this.InitTable(ref this.Table1, 5, 3);
+            this.InitTable(ref this.Table2, 7, 2);
 
             List<String> cousineTypesAsStrings = Restaurant.GetCousineTypes().ConvertAll(x => x.ToString());
 
@@ -37,13 +35,13 @@ namespace RestaurantRatingApp_V2
 
         private void LoginAdmin()
         {
-            this.user.Login("admin_user", "1234");
+            this.user.Login("admin", "1234");
         }
 
-        private void InitTable(uint numOfRows, uint numOfCells)
+        private void InitTable(ref Table table, uint numOfRows, uint numOfCells)
         {
-            this.Table1.BorderStyle = BorderStyle.Solid;
-            this.Table1.CellSpacing = 10;
+            table.BorderStyle = BorderStyle.Solid;
+            table.CellSpacing = 10;
 
 
             Random rng = new Random(69 + 420);
@@ -64,20 +62,21 @@ namespace RestaurantRatingApp_V2
                     row.Cells.Add(cell);
                 }
 
-                this.Table1.Rows.Add(row);
+                table.Rows.Add(row);
             }
         }
         protected void Button1_Click(object sender, EventArgs e)
         {
             try
             {
-                List<User> users = this.user.GetUsers();
+                List<Restaurant> restaurants = this.user.GetRestaurants(numOfRestaurants:-1);
+                List<Restaurant> topRestaurants = Restaurant.SortRestaurantsByWilsonScore(restaurants);
 
                 for (int i = 0; i < this.Table1.Rows.Count; ++i)
                 {
-                    this.Table1.Rows[i].Cells[0].Text = users[i].Username;
-                    this.Table1.Rows[i].Cells[1].Text = users[i].Type.ToString();
-                    this.Table1.Rows[i].Cells[2].Text = users[i].RestaurantName;
+                    this.Table1.Rows[i].Cells[0].Text = topRestaurants[i].Name;
+                    this.Table1.Rows[i].Cells[1].Text = topRestaurants[i].Rating.ToString();
+                    this.Table1.Rows[i].Cells[2].Text = topRestaurants[i].Owner;
                 }
             }
             catch (Exception) {  }
@@ -94,8 +93,9 @@ namespace RestaurantRatingApp_V2
                 "an_img.png",
                 Restaurant.CousineType.ITALIAN,
                 "some words",
-                "x_username"
-                );
+                "x_username",
+                2.2f
+            );
 
             Test.AddRestaurant(testRestaurant);
 
@@ -108,6 +108,19 @@ namespace RestaurantRatingApp_V2
             Test.MakeReview(testReviw);
             Test.RemoveReview(testReviw);
             Test.RemoveRestaurant(testRestaurant);
+        }
+
+        protected void Button2_Click(object sender, EventArgs e)
+        {
+            string inputStr = this.TextBox2.Text;
+
+            List<Restaurant> matches = this.user.MakeSearch(inputStr, 7, searchByRestaurantName: true);
+
+            for (int i = 0; i < this.Table2.Rows.Count; ++i)
+            {
+                this.Table2.Rows[i].Cells[0].Text = matches[i].Name;
+                this.Table2.Rows[i].Cells[1].Text = matches[i].Description;
+            }
         }
     }
 }

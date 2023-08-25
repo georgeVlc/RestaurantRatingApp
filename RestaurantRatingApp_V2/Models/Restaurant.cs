@@ -51,13 +51,13 @@ namespace RestaurantRatingApp_V2.Models
             this.Rank = 0.0;
         }
 
-        public Restaurant(String name, String imgName, CousineType type, String description, String owner)
+        public Restaurant(String name, String imgName, CousineType type, String description, String owner, float rating)
         {
             this.Name = name;
             this.ImgName = imgName;
             this.Description = description;
             this.Owner = owner;
-            this.Rating = 0.0f;
+            this.Rating = rating;
             this.Type = type;
             this.Rank = 0.0;
         }

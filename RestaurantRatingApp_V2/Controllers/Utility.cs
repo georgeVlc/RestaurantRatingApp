@@ -56,13 +56,13 @@ namespace RestaurantRatingApp_V2.Controllers
             }
         }
 
-        public static List<Restaurant> GetRestaurants(User user, int numOfRestaurants)
+        public static List<Restaurant> GetRestaurants(int numOfRestaurants)
         {
             try { List<Restaurant> restaurants = DbAccess.SelectRestaurants(numOfRestaurants); return restaurants; }
             catch (Exception e) { throw e; }
         }
 
-        public static List<Restaurant> GetRestaurantsByCousine(User user, Restaurant.CousineType cousineType, int numOfRestaurants)
+        public static List<Restaurant> GetRestaurantsByCousine(Restaurant.CousineType cousineType, int numOfRestaurants)
         {
             try { List<Restaurant> restaurants = DbAccess.SelectRestaurantsByCousine(cousineType, numOfRestaurants); return restaurants; }
             catch (Exception e) { throw e; }
