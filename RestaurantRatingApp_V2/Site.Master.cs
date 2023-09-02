@@ -73,12 +73,7 @@ namespace RestaurantRatingApp_V2
         {
 
         }
-        public IQueryable<Restaurant> GetRestaurants()
-        {
-            var _db = new RestaurantRatingApp_V2.Models.RestaurantContext();
-            IQueryable<Restaurant> query = _db.Restaurants;
-            return query;
-        }
+        
 
         protected void Unnamed_LoggingOut(object sender, LoginCancelEventArgs e)
         {

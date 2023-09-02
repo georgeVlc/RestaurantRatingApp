@@ -32,8 +32,8 @@ namespace RestaurantRatingApp_V2.Models
 
             public Review(String restaurantName, String username, float rating)
             {
-                this.RestaurantName = restaurantName;
                 this.Username = username;
+                this.RestaurantName = restaurantName;   
                 this.Rating = rating;
             }
 

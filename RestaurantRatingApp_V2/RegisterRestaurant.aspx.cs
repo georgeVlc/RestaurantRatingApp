@@ -7,10 +7,16 @@ using System.Web.UI.WebControls;
 
 namespace RestaurantRatingApp_V2
 {
-    public partial class RestaurantList : System.Web.UI.Page
+    public partial class RegisterRestaurant : System.Web.UI.Page
     {
         protected void Page_Load(object sender, EventArgs e)
         {
+
+        }
+
+        protected void btnSubmit_Click(object sender, EventArgs e)
+        {
+           
 
         }
     }

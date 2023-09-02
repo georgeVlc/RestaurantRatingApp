@@ -6,21 +6,52 @@ using System.Data.SqlClient;
 using System.Web.UI.WebControls;
 using System;
 using static RestaurantRatingApp_V2.Models.User;
-
-
+using System.Diagnostics;
+using static System.Net.Mime.MediaTypeNames;
+using System.Data.Entity.Core.Common.CommandTrees.ExpressionBuilder;
+using System.Security.Cryptography;
+using static RestaurantRatingApp_V2.Models.Restaurant;
+using System.Linq;
 
 namespace RestaurantRatingApp_V2.Models
 {
     public class DbAccess
     {
+        public static void UpdateRestaurantRating(String restaurantName)
+        {
+            try
+            {
+                string conString = ConfigurationManager.ConnectionStrings["RestaurantRatingApp"].ConnectionString;
+
+                using (SqlConnection connection = new SqlConnection(conString))
+                {
+                    connection.Open();
+                    SqlCommand cm = new SqlCommand(
+                        "update Restaurant set Restaurant.resRating = t.avg_rating " +
+                        "from ( select Reviews.resName, avg(Reviews.revRating ) as avg_rating " +
+                        "from Reviews where Reviews.resName like '" + restaurantName +
+                        "' group by Reviews.resName ) t " +
+                        "where t.resName = Restaurant.resName;",
+                        connection
+                    );
+
+                    SqlDataReader sdr = cm.ExecuteReader();
+                }
+            }
+            catch (Exception e)
+            {
+                e.Data.Add("UserMessage", "An error occured while updating Restaurant " + restaurantName + " rating");
+                throw e;
+            }
+        }
 
         public static (User, String) SelectUser(String username)
         {
             try
             {
-                string ConString = ConfigurationManager.ConnectionStrings["RestaurantRatingApp"].ConnectionString;
+                string conString = ConfigurationManager.ConnectionStrings["RestaurantRatingApp"].ConnectionString;
 
-                using (SqlConnection connection = new SqlConnection(ConString))
+                using (SqlConnection connection = new SqlConnection(conString))
                 {
                     connection.Open();
                     SqlCommand cm = new SqlCommand("select * from Users where userName='" + username + "';", connection);
@@ -33,8 +64,8 @@ namespace RestaurantRatingApp_V2.Models
 
                     (User, String) res = (
                             new User(
-                                username, 
-                                userType, 
+                                username,
+                                userType,
                                 sdr["resName"].ToString()
                             ),
                             sdr["userPwd"].ToString()
@@ -45,24 +76,28 @@ namespace RestaurantRatingApp_V2.Models
             }
             catch (Exception e)
             {
-                System.Diagnostics.Debug.WriteLine("OOPs, something went wrong.\n" + e);
                 e.Data.Add("UserMessage", "An error occured while reading user data");
                 throw e;
             }
         }
 
-        public static List<(User, String)> SelecAlltUsers()
+        public static List<(User, String)> SelectUsers(int numOfUsers)
         {
             List<(User, String)> userList = new List<(User, String)>();
 
             try
             {
-                string ConString = ConfigurationManager.ConnectionStrings["RestaurantRatingApp"].ConnectionString;
+                string conString = ConfigurationManager.ConnectionStrings["RestaurantRatingApp"].ConnectionString;
 
-                using (SqlConnection connection = new SqlConnection(ConString))
+                using (SqlConnection connection = new SqlConnection(conString))
                 {
                     connection.Open();
-                    SqlCommand cm = new SqlCommand("select * from Users", connection);
+
+                    string cmdText = numOfUsers == -1 ?
+                        "select * from Users;" :
+                        "select * from Users limit " + numOfUsers.ToString() + ";";
+
+                    SqlCommand cm = new SqlCommand(cmdText, connection);
                     SqlDataReader sdr = cm.ExecuteReader();
 
                     while (sdr.Read())
@@ -86,7 +121,6 @@ namespace RestaurantRatingApp_V2.Models
             }
             catch (Exception e)
             {
-                System.Diagnostics.Debug.WriteLine("OOPs, something went wrong.\n" + e);
                 e.Data.Add("UserMessage", "An error occured while reading user data");
                 throw e;
             }
@@ -94,33 +128,41 @@ namespace RestaurantRatingApp_V2.Models
             return userList;
         }
 
-        public static List<Restaurant> SelectRestaurants()
+        public static List<Restaurant> SelectRestaurants(int numOfRestaurants)
         {
-            List<Restaurant> RestaurantList = new List<Restaurant>();
+            List<Restaurant> restaurantList = new List<Restaurant>();
 
             try
             {
-                string ConString = ConfigurationManager.ConnectionStrings["RestaurantRatingApp"].ConnectionString;
-                
-                using (SqlConnection connection = new SqlConnection(ConString))
+                string conString = ConfigurationManager.ConnectionStrings["RestaurantRatingApp"].ConnectionString;
+
+                using (SqlConnection connection = new SqlConnection(conString))
                 {
                     connection.Open();
-                    SqlCommand cm = new SqlCommand("select * from Restaurant", connection);
+
+                    string cmdText = numOfRestaurants == -1 ?
+                        "select * from Restaurant;" :
+                        "select * from Restaurant limit " + numOfRestaurants.ToString() + " ;";
+
+                    Debug.WriteLine(cmdText);
+                    SqlCommand cm = new SqlCommand(cmdText, connection);
                     SqlDataReader sdr = cm.ExecuteReader();
 
                     Restaurant.CousineType cousineType;
 
-                    Enum.TryParse<Restaurant.CousineType>(sdr["resType"].ToString(), out cousineType);
+
 
                     while (sdr.Read())
                     {
-                        RestaurantList.Add(
+                        Enum.TryParse<Restaurant.CousineType>(sdr["resType"].ToString(), out cousineType);
+                        restaurantList.Add(
                             new Restaurant(
-                                sdr["resName"].ToString(), 
-                                sdr["resImgName"].ToString(), 
+                                sdr["resName"].ToString(),
+                                sdr["resImgName"].ToString(),
                                 cousineType,
                                 sdr["resDescription"].ToString(),
-                                sdr["resOwner"].ToString()
+                                sdr["resOwner"].ToString(),
+                                float.Parse(sdr["resRating"].ToString())
                             )
                         );
                     }
@@ -128,34 +170,127 @@ namespace RestaurantRatingApp_V2.Models
             }
             catch (Exception e)
             {
-                System.Diagnostics.Debug.WriteLine("OOPs, something went wrong.\n" + e);
                 e.Data.Add("UserMessage", "An error occured while reading restuarant data");
                 throw e;
             }
 
-            return RestaurantList;
+            return restaurantList;
         }
 
-        public static List<Review> SelectReviews()
+        public static List<Restaurant> SelectRestaurantsByCousine(Restaurant.CousineType cousineType, int numOfRestaurants)
         {
-            List<Review> ReviewsList = new List<Review>();
+            List<Restaurant> restaurantList = new List<Restaurant>();
 
             try
             {
-                string ConString = ConfigurationManager.ConnectionStrings["RestaurantRatingApp"].ConnectionString;
+                string conString = ConfigurationManager.ConnectionStrings["RestaurantRatingApp"].ConnectionString;
 
-                using (SqlConnection connection = new SqlConnection(ConString))
+                using (SqlConnection connection = new SqlConnection(conString))
                 {
                     connection.Open();
-                    SqlCommand cm = new SqlCommand("select * from Reviews", connection);
+
+                    string cmdText = numOfRestaurants == -1 ?
+                        "select * from Restaurant where Restaurant.resType = '" + cousineType.ToString() + "';" :
+                        "select * from Restaurant where Restaurant.resType = '" + cousineType.ToString() + "' limit " + numOfRestaurants + ";";
+
+                    SqlCommand cm = new SqlCommand(cmdText, connection);
+                    SqlDataReader sdr = cm.ExecuteReader();
+                  
+
+                    while (sdr.Read())
+                    {
+                        
+                        restaurantList.Add(
+                            new Restaurant(
+                                sdr["resName"].ToString(),
+                                sdr["resImgName"].ToString(),
+                                cousineType,
+                                sdr["resDescription"].ToString(),
+                                sdr["resOwner"].ToString(),
+                                float.Parse(sdr["resRating"].ToString())
+
+                            )
+                        );
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                e.Data.Add("UserMessage", "An error occured while reading restuarant data");
+                throw e;
+            }
+
+            return restaurantList;
+        }
+
+        public static List<Restaurant> SelectRestaurantsByCousine(string cousineType, int numOfRestaurants)
+        {
+            List<Restaurant> restaurantList = new List<Restaurant>();
+
+            try
+            {
+                string conString = ConfigurationManager.ConnectionStrings["RestaurantRatingApp"].ConnectionString;
+
+                using (SqlConnection connection = new SqlConnection(conString))
+                {
+                    connection.Open();
+
+                    string cmdText = numOfRestaurants == -1 ?
+                        "select * from Restaurant where Restaurant.resType = '" + cousineType + "';" :
+                        "select * from Restaurant where Restaurant.resType = '" + cousineType + "' limit " + numOfRestaurants + ";";
+
+                    SqlCommand cm = new SqlCommand(cmdText, connection);
+                    SqlDataReader sdr = cm.ExecuteReader();
+                    Restaurant.CousineType cousinetype;
+                    while (sdr.Read())
+                    {
+                        Enum.TryParse<Restaurant.CousineType>(sdr["resType"].ToString(), out cousinetype);
+                        restaurantList.Add(
+                            new Restaurant(
+                                sdr["resName"].ToString(),
+                                sdr["resImgName"].ToString(),
+                                cousinetype,
+                                sdr["resDescription"].ToString(),
+                                sdr["resOwner"].ToString(),
+                                float.Parse(sdr["resRating"].ToString())
+                            )
+                        );
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                e.Data.Add("UserMessage", "An error occured while reading restuarant data");
+                throw e;
+            }
+
+            return restaurantList;
+        }
+
+        public static List<Review> SelectReviews(int numOfReviews)
+        {
+            List<Review> reviewsList = new List<Review>();
+
+            try
+            {
+                string conString = ConfigurationManager.ConnectionStrings["RestaurantRatingApp"].ConnectionString;
+                string cmdText = numOfReviews == -1 ?
+                    "select * from Reviews;" :
+                    "select * from Reviews limit " + numOfReviews.ToString() + " ;";
+
+
+                using (SqlConnection connection = new SqlConnection(conString))
+                {
+                    connection.Open();
+                    SqlCommand cm = new SqlCommand(cmdText, connection);
                     SqlDataReader sdr = cm.ExecuteReader();
 
                     while (sdr.Read())
                     {
-                        ReviewsList.Add(
+                        reviewsList.Add(
                             new Review(
-                                sdr["userName"].ToString(), 
-                                sdr["resName"].ToString(), 
+                                sdr["userName"].ToString(),
+                                sdr["resName"].ToString(),
                                 float.Parse(sdr["revRating"].ToString())
                             )
                         );
@@ -164,40 +299,115 @@ namespace RestaurantRatingApp_V2.Models
             }
             catch (Exception e)
             {
-                System.Diagnostics.Debug.WriteLine("OOPs, something went wrong.\n" + e);
                 e.Data.Add("UserMessage", "An error occured while reading review data");
             }
 
-            return ReviewsList;
+            return reviewsList;
+        }
+
+
+        public static List<Review> SelectReviewsByUsername(string username, int numOfReviews)
+        {
+            List<Review> reviewsList = new List<Review>();
+
+            try
+            {
+                string conString = ConfigurationManager.ConnectionStrings["RestaurantRatingApp"].ConnectionString;
+                string cmdText = numOfReviews == -1 ?
+                    "select * from Reviews where Reviews.userName = '" + username + "';" :
+                    "select * from Reviews where Reviews.userName = '" + username + "' limit " + numOfReviews.ToString() + ";";
+
+
+                using (SqlConnection connection = new SqlConnection(conString))
+                {
+                    connection.Open();
+                    SqlCommand cm = new SqlCommand(cmdText, connection);
+                    SqlDataReader sdr = cm.ExecuteReader();
+
+                    while (sdr.Read())
+                    {
+                        reviewsList.Add(
+                            new Review(
+                                sdr["userName"].ToString(),
+                                sdr["resName"].ToString(),
+                                float.Parse(sdr["revRating"].ToString())
+                            )
+                        );
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                e.Data.Add("UserMessage", "An error occured while reading review data");
+            }
+
+            return reviewsList;
+        }
+
+        public static List<Review> SelectReviewsByRestaurantName(string restaurantName, int numOfReviews)
+        {
+            List<Review> reviewsList = new List<Review>();
+
+            try
+            {
+                string conString = ConfigurationManager.ConnectionStrings["RestaurantRatingApp"].ConnectionString;
+                string cmdText = numOfReviews == -1 ?
+                    "select * from Reviews where Reviews.resName = '" + restaurantName + "';" :
+                    "select * from Reviews where Reviews.resName = '" + restaurantName + "' limit " + numOfReviews.ToString() + ";";
+
+
+                using (SqlConnection connection = new SqlConnection(conString))
+                {
+                    connection.Open();
+                    SqlCommand cm = new SqlCommand(cmdText, connection);
+                    SqlDataReader sdr = cm.ExecuteReader();
+
+                    while (sdr.Read())
+                    {
+                        reviewsList.Add(
+                            new Review(
+                                sdr["userName"].ToString(),
+                                sdr["resName"].ToString(),
+                                float.Parse(sdr["revRating"].ToString())
+                            )
+                        );
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                e.Data.Add("UserMessage", "An error occured while reading review data");
+            }
+
+            return reviewsList;
         }
 
         public static void DeleteRestaurant(string restaurantName)
         {
             try
             {
-                string ConString = ConfigurationManager.ConnectionStrings["RestaurantRatingApp"].ConnectionString;
+                string conString = ConfigurationManager.ConnectionStrings["RestaurantRatingApp"].ConnectionString;
 
-                using (SqlConnection connection = new SqlConnection(ConString))
+                using (SqlConnection connection = new SqlConnection(conString))
                 {
                     connection.Open();
                     SqlCommand cm = new SqlCommand("delete from Restaurant where resName='" + restaurantName + "';", connection);
                     SqlDataReader sdr = cm.ExecuteReader();
                 }
 
-                using (SqlConnection connection = new SqlConnection(ConString))
+                using (SqlConnection connection = new SqlConnection(conString))
                 {
                     connection.Open();
                     SqlCommand cm = new SqlCommand(
                         "update Users" +
                         " set Users.resName = NULL, Users.userType = 'SIGNED'" +
-                        " where Users.resName = '" + restaurantName + "';", 
+                        " where Users.resName = '" + restaurantName + "';",
                         connection);
                     SqlDataReader sdr = cm.ExecuteReader();
                 }
             }
             catch (Exception e)
             {
-                System.Diagnostics.Debug.WriteLine("OOPs, something went wrong.\n" + e);
                 e.Data.Add("UserMessage", "An error occured while attempting to delete restaurant");
                 throw e;
             }
@@ -207,8 +417,8 @@ namespace RestaurantRatingApp_V2.Models
         {
             try
             {
-                string ConString = ConfigurationManager.ConnectionStrings["RestaurantRatingApp"].ConnectionString;
-                using (SqlConnection connection = new SqlConnection(ConString))
+                string conString = ConfigurationManager.ConnectionStrings["RestaurantRatingApp"].ConnectionString;
+                using (SqlConnection connection = new SqlConnection(conString))
                 {
                     // Opening Connection  
                     connection.Open();
@@ -220,7 +430,6 @@ namespace RestaurantRatingApp_V2.Models
             }
             catch (Exception e)
             {
-                System.Diagnostics.Debug.WriteLine("OOPs, something went wrong.\n" + e);
                 e.Data.Add("UserMessage", "An error occured while attempting to delete user");
                 throw e;
             }
@@ -230,9 +439,9 @@ namespace RestaurantRatingApp_V2.Models
         {
             try
             {
-                string ConString = ConfigurationManager.ConnectionStrings["RestaurantRatingApp"].ConnectionString;
+                string conString = ConfigurationManager.ConnectionStrings["RestaurantRatingApp"].ConnectionString;
 
-                using (SqlConnection connection = new SqlConnection(ConString))
+                using (SqlConnection connection = new SqlConnection(conString))
                 {
                     connection.Open();
                     SqlCommand cm = new SqlCommand("delete from Reviews where userName='" + userName + "' and resName='" + restaurant + "';", connection);
@@ -241,29 +450,30 @@ namespace RestaurantRatingApp_V2.Models
             }
             catch (Exception e)
             {
-                System.Diagnostics.Debug.WriteLine("OOPs, something went wrong.\n" + e);
                 e.Data.Add("UserMessage", "An error occured while attempting to delete review");
                 throw e;
             }
+
+            UpdateRestaurantRating(restaurant);
         }
 
         public static void InsertRestaurant(Restaurant r)
         {
             try
             {
-                string ConString = ConfigurationManager.ConnectionStrings["RestaurantRatingApp"].ConnectionString;
+                string conString = ConfigurationManager.ConnectionStrings["RestaurantRatingApp"].ConnectionString;
 
-                using (SqlConnection connection = new SqlConnection(ConString))
+                using (SqlConnection connection = new SqlConnection(conString))
                 {
                     connection.Open();
 
-                    SqlCommand cm = 
+                    SqlCommand cm =
                         new SqlCommand(
-                            "insert into Restaurant values ('" + r.Name + 
-                            "' , " + r.Rating + ", '" + 
-                            r.ImgName + "' , '" + 
-                            r.Type.ToString() + "' , '" + 
-                            r.Description + "' , '" + r.Owner + "');", 
+                            "insert into Restaurant values ('" + r.Name +
+                            "' , " + r.Rating + ", '" +
+                            r.ImgName + "' , '" +
+                            r.Type.ToString() + "' , '" +
+                            r.Description + "' , '" + r.Owner + "');",
                             connection
                             );
 
@@ -271,12 +481,12 @@ namespace RestaurantRatingApp_V2.Models
                     System.Diagnostics.Debug.WriteLine("Restaurant insert was successful");
                 }
 
-                using (SqlConnection connection = new SqlConnection(ConString))
+                using (SqlConnection connection = new SqlConnection(conString))
                 {
                     connection.Open();
 
                     SqlCommand cm = new SqlCommand(
-                        "update Users set Users.userType = 'APPLICANT'" + 
+                        "update Users set Users.userType = 'APPLICANT'" +
                         ", Users.resName = '" + r.Name + "' where Users.userName = '" + r.Owner + "';",
                         connection
                     );
@@ -287,7 +497,6 @@ namespace RestaurantRatingApp_V2.Models
             }
             catch (Exception e)
             {
-                System.Diagnostics.Debug.WriteLine("OOPs, something went wrong.\n" + e);
                 e.Data.Add("UserMessage", "An error occured while attempting to insert restaurant");
                 throw e;
             }
@@ -297,14 +506,14 @@ namespace RestaurantRatingApp_V2.Models
         {
             try
             {
-                string ConString = ConfigurationManager.ConnectionStrings["RestaurantRatingApp"].ConnectionString;
+                string conString = ConfigurationManager.ConnectionStrings["RestaurantRatingApp"].ConnectionString;
 
-                using (SqlConnection connection = new SqlConnection(ConString))
+                using (SqlConnection connection = new SqlConnection(conString))
                 {
                     connection.Open();
 
-                    SqlCommand cm = new SqlCommand("insert into Reviews values ('" + r.Username + 
-                        "', '" + r.RestaurantName + 
+                    SqlCommand cm = new SqlCommand("insert into Reviews values ('" + r.Username +
+                        "', '" + r.RestaurantName +
                         "', " + r.Rating + ");"
                         , connection);
 
@@ -314,37 +523,129 @@ namespace RestaurantRatingApp_V2.Models
             }
             catch (Exception e)
             {
-                System.Diagnostics.Debug.WriteLine("OOPs, something went wrong.\n" + e);
                 e.Data.Add("UserMessage", "An error occured while attempting to insert review");
                 throw e;
             }
+
+            UpdateRestaurantRating(r.RestaurantName);
         }
 
         public static void InsertUser(String username, String pwd)
         {
             try
             {
-                string ConString = ConfigurationManager.ConnectionStrings["RestaurantRatingApp"].ConnectionString;
-                using (SqlConnection connection = new SqlConnection(ConString))
+                string conString = ConfigurationManager.ConnectionStrings["RestaurantRatingApp"].ConnectionString;
+                using (SqlConnection connection = new SqlConnection(conString))
                 {
-                    
+
                     connection.Open();
-                    
-                    SqlCommand cm = new SqlCommand("insert into Users (userName, userType, userPwd) values ('" + username + 
-                        "', '" + User.UserType.SIGNED.ToString() + 
+
+                    SqlCommand cm = new SqlCommand("insert into Users (userName, userType, userPwd) values ('" + username +
+                        "', '" + User.UserType.SIGNED.ToString() +
                         "', '" + pwd + "');",
                         connection);
-                    
+
                     SqlDataReader sdr = cm.ExecuteReader();
                     System.Diagnostics.Debug.WriteLine("User insert was successful");
                 }
             }
             catch (Exception e)
             {
-                System.Diagnostics.Debug.WriteLine("OOPs, something went wrong.\n" + e);
                 e.Data.Add("UserMessage", "An error occured while attempting to insert user");
                 throw e;
             }
         }
+
+
+
+
+        //---------------------------------------------------------------------------------------------//
+        //Dimitris' 
+        //Methods to be called by the Utility class
+
+        public static Restaurant SelectRestaurant(String name)
+        {
+            Debug.WriteLine("Name:" + name);
+            try
+            {
+                string ConString = ConfigurationManager.ConnectionStrings["RestaurantRatingApp"].ConnectionString;
+
+                using (SqlConnection connection = new SqlConnection(ConString))
+                {
+                    connection.Open();
+                    SqlCommand cm = new SqlCommand("select * from Restaurant where resName='" + name + "';", connection);
+                    SqlDataReader sdr = cm.ExecuteReader();
+                    Restaurant.CousineType cousineType;
+
+                    sdr.Read();
+                    Enum.TryParse<Restaurant.CousineType>(sdr["resType"].ToString(), out cousineType);
+                    Restaurant restaurant = new Restaurant(
+                                                    sdr["resName"].ToString(),
+                                                    sdr["resImgName"].ToString(),
+                                                    cousineType,
+                                                    sdr["resDescription"].ToString(),
+                                                    sdr["resOwner"].ToString(),
+                                float.Parse(sdr["resRating"].ToString())
+                                                );
+
+                    return restaurant;
+
+                }
+            }
+            catch (Exception e)
+            {
+                System.Diagnostics.Debug.WriteLine("OOPs, something went wrong.\n" + e);
+                e.Data.Add("UserMessage", "An error occured while reading restuarant data");
+                throw e;
+            }
+
+        }
+
+
+        public static List<Restaurant> SelectTopRated()
+        {
+            List<Restaurant> restaurantList = new List<Restaurant>();
+            try
+            {
+                string ConString = ConfigurationManager.ConnectionStrings["RestaurantRatingApp"].ConnectionString;
+
+                using (SqlConnection connection = new SqlConnection(ConString))
+                {
+                    connection.Open();
+                    SqlCommand cm = new SqlCommand("SELECT * FROM Restaurant ORDER BY resRating DESC OFFSET 1 ROWS FETCH NEXT 4 ROWS ONLY;", connection);
+                    SqlDataReader sdr = cm.ExecuteReader();
+                    Restaurant.CousineType cousineType;
+
+  
+
+                    while (sdr.Read())
+                    {
+                        Enum.TryParse<Restaurant.CousineType>(sdr["resType"].ToString(), out cousineType);
+                        restaurantList.Add(
+                            new Restaurant(
+                                sdr["resName"].ToString(),
+                                sdr["resImgName"].ToString(),
+                                cousineType,
+                                sdr["resDescription"].ToString(),
+                              sdr["resOwner"].ToString(),
+                                float.Parse(sdr["resRating"].ToString())
+                            )
+                        );
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                e.Data.Add("UserMessage", "An error occured while reading restuarant data");
+                throw e;
+            }
+
+            return restaurantList;
+        }
+
+
+
+      
+
     }
 }

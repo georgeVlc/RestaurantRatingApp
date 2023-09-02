@@ -13,10 +13,26 @@ namespace RestaurantRatingApp_V2
 {
     public partial class _Default : Page
     {
+        private User user;
+
         protected void Page_Load(object sender, EventArgs e)
         {
+            this.user = new User();
+            this.LoginAdmin();
+
+            this.GetTopRatedRestaurants();
+ 
+  
         }
-        protected void RunTests()
+
+
+        private void LoginAdmin()
+        {
+            this.user.Login("admin_user", "1234");
+        }
+
+
+        /*protected void RunTests()
         {
             Test.SignUpUser("i_username", "4321");
             Test.LoginUser("a_username", "4321");
@@ -42,5 +58,24 @@ namespace RestaurantRatingApp_V2
             Test.RemoveReview(testReviw);
             Test.RemoveRestaurant(testRestaurant);
         }
+
+        */
+
+
+        public List<Restaurant> GetTopRatedRestaurants()
+        {
+            List<Restaurant> restaurants = DbAccess.SelectTopRated();
+
+            return restaurants;
+        }
+
+
+        public List<String> GetCousineTypesAsStrings()
+        {
+            return Restaurant.GetCousineTypes().ConvertAll(x => x.ToString());
+               
+        }
+
+
     }
 }

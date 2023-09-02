@@ -75,6 +75,42 @@ namespace RestaurantRatingApp_V2.Models
 
         // functionalities
 
+        public List<User> GetUsers(int numOfUsers = -1)
+        {
+            try { List<User> users = Utility.GetUsers(this, numOfUsers); return users; }
+            catch (Exception e) { throw e; };
+        }
+
+        public List<Restaurant> GetRestaurants(int numOfRestaurants = -1)
+        {
+            try { List<Restaurant> restaurants = Utility.GetRestaurants(numOfRestaurants); return restaurants; }
+            catch (Exception e) { throw e; };
+        }
+
+        public List<Restaurant> GetRestaurantsByCousine(Restaurant.CousineType cousineType, int numOfRestaurants = -1)
+        {
+            try { List<Restaurant> restaurants = Utility.GetRestaurantsByCousine(cousineType, numOfRestaurants); return restaurants; }
+            catch (Exception e) { throw e; }
+        }
+
+        public List<Review> GetReviews(int numOfReviews = -1)
+        {
+            try { List<Review> reviews = Utility.GetReviews(numOfReviews); return reviews; }
+            catch (Exception e) { throw e; };
+        }
+
+        public List<Review> GetReviewsByUsername(string username, int numOfReviews = -1)
+        {
+            try { List<Review> reviews = Utility.GetReviewsByUsername(username, numOfReviews); return reviews; }
+            catch (Exception e) { throw e; };
+        }
+
+        public List<Review> GetReviewsByRestaurantName(string restaurantName, int numOfRestaurants = -1)
+        {
+            try { List<Review> reviews = Utility.GetReviewsByRestaurantName(restaurantName, numOfRestaurants); return reviews; }
+            catch (Exception e) { throw e; };
+        }
+
         public bool Login(String username, String pwd)
         {
             try { Utility.LoginUser(this, username, pwd); return true; }
@@ -93,10 +129,31 @@ namespace RestaurantRatingApp_V2.Models
             catch (Exception e) { throw e; }
         }
 
-        void MakeSearch(StringBuilder sb)
+        public List<Restaurant> MakeSearch(string inputStr, int numOfRestaurants, bool searchByRestaurantName = true)
         {
-            var results = Utility.MakeSearch(sb);
-            // display or pass results to view/despayer
+            try
+            {
+                List<Restaurant> restaurants = Utility.GetRestaurants(numOfRestaurants: -1);
+                List<(Restaurant, int)> restaurantSimilarity = new List<(Restaurant, int)>();
+
+                foreach (Restaurant restaurant in restaurants)
+                {
+                    (Restaurant, int) tuple = (restaurant, 0);
+
+                    if (searchByRestaurantName)
+                        tuple.Item2 = Tools.LevenshteinDistance.Compute(inputStr, restaurant.Name);
+                    else
+                        tuple.Item2 = Tools.LevenshteinDistance.Compute(inputStr, restaurant.Description);
+
+                    restaurantSimilarity.Add(tuple);
+                }
+
+                var mostSimilar = restaurantSimilarity.OrderBy(x => x.Item2).ToList().Take(numOfRestaurants);
+
+                return mostSimilar.Select(x => x.Item1).ToList();
+            }
+            catch (Exception e)
+            { throw e; }
         }
 
         public bool AddRestaurant(Restaurant restaurant)
