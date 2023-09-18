@@ -225,6 +225,9 @@ namespace RestaurantRatingApp_V2.Models
             return restaurantList;
         }
 
+            return restaurantList;
+        }
+
         public static List<Restaurant> SelectRestaurantsByCousine(string cousineType, int numOfRestaurants)
         {
             List<Restaurant> restaurantList = new List<Restaurant>();

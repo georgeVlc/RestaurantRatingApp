@@ -45,24 +45,25 @@ namespace RestaurantRatingApp_V2
 
         /*protected void RunTests()
         {
-            Test.SignUpUser("i_username", "4321");
-            Test.LoginUser("a_username", "4321");
-            Test.LogoutUser("a_username", "4321");
+            Test.SignUpUser("l_username", "4321");
+            Test.LoginUser("x_username", "4321");
+            Test.LogoutUser("x_username", "4321");
 
             Restaurant testRestaurant = new Restaurant(
-                "test_restaurant1",
+                "test_restaurant2",
                 "an_img.png",
                 Restaurant.CousineType.ITALIAN,
                 "some words",
-                "h_username"
-                );
+                "x_username",
+                2.2f
+            );
 
             Test.AddRestaurant(testRestaurant);
 
             Review testReviw = new Review(
-                "test_restaurant1",
-                "h_username",
-                1.9f
+                "test_restaurant2",
+                "x_username",
+                3.9f
                 );
 
             Test.MakeReview(testReviw);
