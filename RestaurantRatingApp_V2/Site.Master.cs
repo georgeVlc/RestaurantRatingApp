@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Security.Claims;
 using System.Security.Principal;
@@ -71,11 +72,11 @@ namespace RestaurantRatingApp_V2
 
         protected void Page_Load(object sender, EventArgs e)
         {
-
+           
         }
-        
 
-        protected void Unnamed_LoggingOut(object sender, LoginCancelEventArgs e)
+       
+            protected void Unnamed_LoggingOut(object sender, LoginCancelEventArgs e)
         {
             Context.GetOwinContext().Authentication.SignOut(DefaultAuthenticationTypes.ApplicationCookie);
         }

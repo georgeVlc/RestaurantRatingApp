@@ -65,7 +65,7 @@ namespace RestaurantRatingApp_V2.Models
 
         public static List<Restaurant.CousineType> GetCousineTypes()
         {
-            return ((Restaurant.CousineType[])Enum.GetValues(typeof(Restaurant.CousineType))).ToList<Restaurant.CousineType>();
+            return ((Restaurant.CousineType[])Enum.GetValues(typeof(Restaurant.CousineType))).Skip(1).ToList<Restaurant.CousineType>();
         }
 
         public static double GetWilsonScore(Restaurant restaurant, uint numOfReviews, double confidenceLevel = 0.95)

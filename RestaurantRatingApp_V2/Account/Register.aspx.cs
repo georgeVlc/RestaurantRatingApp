@@ -26,6 +26,8 @@ namespace RestaurantRatingApp_V2.Account
 
                 signInManager.SignIn( user, isPersistent: false, rememberBrowser: false);
                 IdentityHelper.RedirectToReturnUrl(Request.QueryString["ReturnUrl"], Response);
+
+               
             }
             else 
             {

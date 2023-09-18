@@ -12,6 +12,8 @@ using System.Data.Entity.Core.Common.CommandTrees.ExpressionBuilder;
 using System.Security.Cryptography;
 using static RestaurantRatingApp_V2.Models.Restaurant;
 using System.Linq;
+using System.Web.Configuration;
+using System.Web.Security;
 
 namespace RestaurantRatingApp_V2.Models
 {
@@ -195,11 +197,11 @@ namespace RestaurantRatingApp_V2.Models
 
                     SqlCommand cm = new SqlCommand(cmdText, connection);
                     SqlDataReader sdr = cm.ExecuteReader();
-                  
+
 
                     while (sdr.Read())
                     {
-                        
+
                         restaurantList.Add(
                             new Restaurant(
                                 sdr["resName"].ToString(),
@@ -557,10 +559,8 @@ namespace RestaurantRatingApp_V2.Models
         }
 
 
-
-
-        //---------------------------------------------------------------------------------------------//
-        //Dimitris' 
+        //---------------------------------------------------------------------------//
+        //Dimitris 
         //Methods to be called by the Utility class
 
         public static Restaurant SelectRestaurant(String name)
@@ -585,7 +585,7 @@ namespace RestaurantRatingApp_V2.Models
                                                     cousineType,
                                                     sdr["resDescription"].ToString(),
                                                     sdr["resOwner"].ToString(),
-                                float.Parse(sdr["resRating"].ToString())
+                                                    float.Parse(sdr["resRating"].ToString())
                                                 );
 
                     return restaurant;
@@ -601,7 +601,6 @@ namespace RestaurantRatingApp_V2.Models
 
         }
 
-
         public static List<Restaurant> SelectTopRated()
         {
             List<Restaurant> restaurantList = new List<Restaurant>();
@@ -616,7 +615,7 @@ namespace RestaurantRatingApp_V2.Models
                     SqlDataReader sdr = cm.ExecuteReader();
                     Restaurant.CousineType cousineType;
 
-  
+
 
                     while (sdr.Read())
                     {
@@ -644,8 +643,125 @@ namespace RestaurantRatingApp_V2.Models
         }
 
 
+        //---------------------Authentication Methods-------------------------//
 
-      
+        public static bool AuthenticateUser(string username, string password)
+        {
+            // Authenticate the user against your database
+            string connectionString = ConfigurationManager.ConnectionStrings["RestaurantRatingApp"].ConnectionString;
+
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+
+                string query = "SELECT userPWD FROM Users WHERE userName = @Username";
+                SqlCommand command = new SqlCommand(query, connection);
+                command.Parameters.AddWithValue("@Username", username);
+
+                SqlDataReader reader = command.ExecuteReader();
+
+                if (reader.Read())
+                {
+                    string storedPasswordHash = reader["userPwd"].ToString();
+
+                    // Verify the entered password against the stored password hash
+                    if (VerifyPassword(password, storedPasswordHash))
+                    {
+                        // Log in the user
+                        FormsAuthentication.SetAuthCookie(username, false);
+                        return true;
+                    }
+                }
+
+                return false;
+            }
+        }
+
+        public static bool UserExists(String username)
+        {
+            try
+            {
+                string ConString = ConfigurationManager.ConnectionStrings["RestaurantRatingApp"].ConnectionString;
+
+                using (SqlConnection connection = new SqlConnection(ConString))
+                {
+                    connection.Open();
+                    SqlCommand cm = new SqlCommand("SELECT COUNT(*)  FROM Users WHERE userName = @Username",connection);
+                    {
+                        cm.Parameters.AddWithValue("@Username", username);
+                        int count = (int)cm.ExecuteScalar();
+
+                        if (count > 0) { return true; }
+                  
+                        return false;
+
+                    }
+
+                }
+            }
+            catch (Exception e)
+            {
+                e.Data.Add("UserMessage", "An error occured During Sign Up");
+                throw e;
+            }
+        }
+
+
+       
+
+
+
+        private static bool VerifyPassword(string enteredPassword, string storedPasswordHash)  //Temporary until proper hashing and 
+        {
+
+            if (enteredPassword != storedPasswordHash)                    // implement encryption method for converting passwords and entered passwords to hashed 
+            {
+                return false;
+            }
+            return true;
+        }
+
+
+        public static User SelectUserByUsername(String username)
+        {
+            User res;
+            try
+            {
+                string conString = ConfigurationManager.ConnectionStrings["RestaurantRatingApp"].ConnectionString;
+
+                using (SqlConnection connection = new SqlConnection(conString))
+                {
+                    connection.Open();
+                    SqlCommand cm = new SqlCommand("select * from Users where userName='" + username + "';", connection);
+                    SqlDataReader sdr = cm.ExecuteReader();
+
+                    sdr.Read();
+
+                    User.UserType userType;
+                    Enum.TryParse<User.UserType>(sdr["userType"].ToString(), out userType);
+
+                    res = (
+                            new User(
+                                username,
+                                userType,
+                                sdr["resName"].ToString()
+                            ));
+
+                    return res;
+                }
+            }
+            catch (Exception e)
+            {
+                e.Data.Add("UserMessage", "An error occured while reading user data");
+                throw e;
+            }
+        }
+
+
+
+
+
 
     }
 }
+

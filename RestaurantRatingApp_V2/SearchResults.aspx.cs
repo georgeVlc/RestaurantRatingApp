@@ -25,15 +25,11 @@ namespace RestaurantRatingApp_V2
             }
 
             
-            
-/*
             if (!string.IsNullOrEmpty(selectedcategory))
             {
-                //rbfilterlist.SelectedValue = selectedcategory.ToString();
-                rbfilterlist.Items.FindByValue(selectedcategory).Selected = true;
+               // rbfilterlist.SelectedValue = selectedcategory;
             }
             
-*/
 
             
         }
@@ -49,18 +45,14 @@ namespace RestaurantRatingApp_V2
             }
             else 
             {
-                Debug.WriteLine("On DB call" + selectedcategory);
+               // Debug.WriteLine("On DB call" + selectedcategory);
                 restaurants = DbAccess.SelectRestaurantsByCousine(selectedcategory, -1);     
             }
 
+            Restaurant.SortRestaurantsByWilsonScore(restaurants);
             return restaurants;
 
         }
-
-        
-
-
-
 
         protected void SelectedIndexChanged(object sender, EventArgs e)
         {
@@ -68,19 +60,12 @@ namespace RestaurantRatingApp_V2
             Debug.WriteLine("On Filter Save" + selectedValue);
             selectedcategory = selectedValue;
             ListView1.DataBind();
-
         }
 
 
-
-
-
-
-        //---------------------------------------------------------------//
         protected void removefilterButtonClick(object sender, EventArgs e)
         {
               Response.Redirect("SearchResults.aspx?");
-         
         }
 
    

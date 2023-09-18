@@ -60,38 +60,56 @@
     </div>
 
 
+    <h2>Categories</h2>
     <div class="container">
-        <h2>Categories</h2>
-        <div class="row">
-            <asp:ListView ID="categoryList" runat="server"
-                GroupItemCount="5"
-                ItemType="System.String" SelectMethod="GetCousineTypesAsStrings">
-                <EmptyDataTemplate>
-                    <table>
-                        <tr>
-                            <td>No data was returned.</td>
+        <div class="shadow-lg p-3 mb-5 bg-body rounded">
+            <div class="row">
+                <asp:ListView ID="categoryList" runat="server"
+                    GroupItemCount="5"
+                    ItemType="System.String" SelectMethod="GetCousineTypesAsStrings">
+                    <EmptyDataTemplate>
+                        <table>
+                            <tr>
+                                <td>No data was returned.</td>
+                            </tr>
+                        </table>
+                    </EmptyDataTemplate>
+                    <GroupTemplate>
+                        <tr id="itemPlaceholderContainer" runat="server">
+                            <td id="itemPlaceholder" runat="server"></td>
                         </tr>
-                    </table>
-                </EmptyDataTemplate>
-                <GroupTemplate>
-                    <tr id="itemPlaceholderContainer" runat="server">
-                        <td id="itemPlaceholder" runat="server"></td>
-                    </tr>
-                </GroupTemplate>
-                <ItemTemplate>
-                    <div class="col align-content-center justify-content-center">
-                        <a href="SearchResults.aspx?category=<%#:Item%>">
-                            <h7><%#:Item%></h7> 
-                        </a>
-                     </div>
-                </ItemTemplate>
-            </asp:ListView>
-
-
+                    </GroupTemplate>
+                    <ItemTemplate>
+                        <div class="col align-content-center justify-content-center  text-center">
+                            <a href="SearchResults.aspx?category=<%#:Item%>">
+                                <h7><%#:Item%></h7>
+                            </a>
+                        </div>
+                    </ItemTemplate>
+                </asp:ListView>
+            </div>
         </div>
     </div>
 
+    <h2>See More</h2>
+    <div class="shadow-lg p-3 mb-5 bg-body rounded">Larger shadow</div>
 
-    
+    <div class="card text-center">
+        <div class="card-body">
+            <h5 class="card-title">Are you an Owner?</h5>
+            <p class="card-text">If you are trying to promote your bussiness then you are at the right place. Join our ever growing community of food enthusiasts royalty free from the link below.</p>
+            <asp:Button ID="registerbtn" runat="server" Text="Register" OnClick="register_click" class="btn btn-primary"/>
+        </div>
+    </div>
+
+    <div class="card">
+        <h5 class="card-header">Featured</h5>
+        <div class="card-body">
+            <h5 class="card-title">Special title treatment</h5>
+            <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
+            <a href="#" class="btn btn-primary">Go somewhere</a>
+        </div>
+    </div>
+
 
 </asp:Content>

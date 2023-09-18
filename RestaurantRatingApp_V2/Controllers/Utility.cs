@@ -86,6 +86,7 @@ namespace RestaurantRatingApp_V2.Controllers
             catch (Exception e) { throw e; };
         }
 
+  
         public static void LoginUser(User user, String username, String pwd)
         {
             try
@@ -225,5 +226,7 @@ namespace RestaurantRatingApp_V2.Controllers
             // return results (maybe not string builder)
             return new StringBuilder();
         }
+
+
     }
 }

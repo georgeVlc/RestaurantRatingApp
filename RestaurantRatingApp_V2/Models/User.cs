@@ -35,6 +35,8 @@ namespace RestaurantRatingApp_V2.Models
 
         public String RestaurantName { get { return this._restaurantName; } protected set { this._restaurantName = value; } }
 
+        public string UserName { get; internal set; }
+
 
         // setters
         // attributes are allowed to change only through verification by Utily Controller
@@ -74,7 +76,6 @@ namespace RestaurantRatingApp_V2.Models
         }
 
         // functionalities
-
         public List<User> GetUsers(int numOfUsers = -1)
         {
             try { List<User> users = Utility.GetUsers(this, numOfUsers); return users; }

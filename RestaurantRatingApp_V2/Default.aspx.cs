@@ -7,22 +7,33 @@ using System.Web.UI;
 using System.Web.UI.WebControls;
 using RestaurantRatingApp_V2.Tests;
 using RestaurantRatingApp_V2.Models.RestaurantRatingApp_V2.Models;
-
+using Microsoft.AspNet.Identity;
+using System.Diagnostics;
 
 namespace RestaurantRatingApp_V2
 {
     public partial class _Default : Page
     {
         private User user;
-
         protected void Page_Load(object sender, EventArgs e)
         {
-            this.user = new User();
-            this.LoginAdmin();
+     
 
-            this.GetTopRatedRestaurants();
- 
-  
+            if (!IsPostBack)
+            {
+                if (Session["User"] != null)
+                {
+                    user = Session["User"] as User;
+                    string username = user.Username;
+                    string usertype = user.Type.ToString();
+                }
+                else
+                {
+
+                }
+
+
+            }
         }
 
 
@@ -76,6 +87,9 @@ namespace RestaurantRatingApp_V2
                
         }
 
-
+        protected void register_click(object sender, EventArgs e)
+        {
+            Response.Redirect("RegisterRestaurant.aspx");
+        }
     }
 }
