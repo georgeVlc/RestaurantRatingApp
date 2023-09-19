@@ -20,7 +20,7 @@ namespace RestaurantRatingApp_V2.Models
 {
     public class DbAccess
     {
-        private static void ChangeUserPassword(string username, string newPwd)
+        public static void ChangeUserPassword(string username, string newPwd)
         {
             try
             {

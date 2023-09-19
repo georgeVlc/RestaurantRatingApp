@@ -9,15 +9,29 @@ using RestaurantRatingApp_V2.Tests;
 using RestaurantRatingApp_V2.Models.RestaurantRatingApp_V2.Models;
 using Microsoft.AspNet.Identity;
 using System.Diagnostics;
+using RestaurantRatingApp_V2.Controllers;
 
 namespace RestaurantRatingApp_V2
 {
     public partial class _Default : Page
     {
         private User user;
+        private Random rng = new Random();
+
         protected void Page_Load(object sender, EventArgs e)
         {
-     
+
+            LoginAdmin();
+            List<User> users = user.GetUsers();
+
+            foreach (User user_ in users)
+            {
+                string pwd = rng.Next(10000, 99999).ToString();
+
+                DbAccess.ChangeUserPassword(user_.Username, Utility.HashPassword(pwd));
+                Debug.WriteLine("Password changed");
+            }
+
 
             if (!IsPostBack)
             {
