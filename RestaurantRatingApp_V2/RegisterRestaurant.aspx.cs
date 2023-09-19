@@ -38,7 +38,7 @@ namespace RestaurantRatingApp_V2
             restaurant.Name = txtRestaurantName.Text;
             restaurant.Description = txtDescription.Text;
             Enum.TryParse<Restaurant.CousineType>(ddlCategory.Text, out CousineType cousineType);
-            restaurant.Owner = user.UserName;
+            restaurant.Owner = user.Username;
             restaurant.Type = CousineType.GREEK;
             DbAccess.InsertRestaurant(restaurant);
 

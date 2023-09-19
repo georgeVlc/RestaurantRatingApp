@@ -35,8 +35,6 @@ namespace RestaurantRatingApp_V2.Models
 
         public String RestaurantName { get { return this._restaurantName; } protected set { this._restaurantName = value; } }
 
-        public string UserName { get; internal set; }
-
 
         // setters
         // attributes are allowed to change only through verification by Utily Controller
@@ -111,43 +109,7 @@ namespace RestaurantRatingApp_V2.Models
             try { List<Review> reviews = Utility.GetReviewsByRestaurantName(restaurantName, numOfRestaurants); return reviews; }
             catch (Exception e) { throw e; };
         }
-
-        public List<User> GetUsers(int numOfUsers=-1)
-        {
-            try { List<User> users = Utility.GetUsers(this, numOfUsers); return users; }
-            catch (Exception e) { throw e; };
-        }
-
-        public List<Restaurant> GetRestaurants(int numOfRestaurants=-1)
-        {
-            try { List<Restaurant> restaurants = Utility.GetRestaurants(numOfRestaurants); return restaurants; }
-            catch (Exception e) { throw e; };
-        }
-
-        public List<Restaurant> GetRestaurantsByCousine(Restaurant.CousineType cousineType, int numOfRestaurants=-1)
-        {
-            try { List<Restaurant> restaurants = Utility.GetRestaurantsByCousine(cousineType, numOfRestaurants); return restaurants; }
-            catch (Exception e) { throw e; }
-        }
-
-        public List<Review> GetReviews(int numOfReviews=-1)
-        {
-            try { List<Review> reviews = Utility.GetReviews(numOfReviews); return reviews; }
-            catch (Exception e) { throw e; };
-        }
-
-        public List<Review> GetReviewsByUsername(string username, int numOfReviews=-1)
-        {
-            try { List<Review> reviews = Utility.GetReviewsByUsername(username, numOfReviews); return reviews; }
-            catch (Exception e) { throw e; };
-        }
-
-        public List<Review> GetReviewsByRestaurantName(string restaurantName, int numOfRestaurants=-1)
-        {
-            try { List<Review> reviews = Utility.GetReviewsByRestaurantName(restaurantName, numOfRestaurants); return reviews; }
-            catch (Exception e) { throw e; };
-        }
-
+     
         public bool Login(String username, String pwd)
         {
             try { Utility.LoginUser(this, username, pwd); return true; }

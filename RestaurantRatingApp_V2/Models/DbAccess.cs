@@ -15,10 +15,36 @@ using System.Linq;
 using System.Web.Configuration;
 using System.Web.Security;
 
+
 namespace RestaurantRatingApp_V2.Models
 {
     public class DbAccess
     {
+        private static void ChangeUserPassword(string username, string newPwd)
+        {
+            try
+            {
+                string conString = ConfigurationManager.ConnectionStrings["RestaurantRatingApp"].ConnectionString;
+
+                using (SqlConnection connection = new SqlConnection(conString))
+                {
+                    connection.Open();
+                    SqlCommand cm = new SqlCommand(
+                        "update Users set Users.userPwd = '" + newPwd +
+                        "' where Users.userName = '" + username + "';",
+                        connection
+                    );
+
+                    SqlDataReader sdr = cm.ExecuteReader();
+                }
+            }
+            catch (Exception e)
+            {
+                e.Data.Add("UserMessage", "An error occured while updating User " + username);
+                throw e;
+            }
+        }
+
         public static void UpdateRestaurantRating(String restaurantName)
         {
             try
@@ -117,7 +143,6 @@ namespace RestaurantRatingApp_V2.Models
                                 sdr["userPwd"].ToString()
                             )
                         );
-
                     }
                 }
             }
@@ -221,9 +246,6 @@ namespace RestaurantRatingApp_V2.Models
                 e.Data.Add("UserMessage", "An error occured while reading restuarant data");
                 throw e;
             }
-
-            return restaurantList;
-        }
 
             return restaurantList;
         }
@@ -759,12 +781,6 @@ namespace RestaurantRatingApp_V2.Models
                 throw e;
             }
         }
-
-
-
-
-
-
     }
 }
 

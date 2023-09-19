@@ -31,7 +31,7 @@ namespace RestaurantRatingApp_V2
                     DbAccess.InsertUser(username, password);            // To be properly Implemented
                     User user = DbAccess.SelectUserByUsername(username);
                     Session["User"] = user;
-                    FormsAuthentication.SetAuthCookie(user.UserName, true);
+                    FormsAuthentication.SetAuthCookie(user.Username, true);
                     FormsAuthentication.RedirectFromLoginPage(user.Username, true);
                 }
                 else

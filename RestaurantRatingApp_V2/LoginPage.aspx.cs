@@ -42,7 +42,7 @@ namespace RestaurantRatingApp_V2
                 {
                     Debug.WriteLine(ex.Message);
                 }
-                FormsAuthentication.SetAuthCookie(user.UserName, true);
+                FormsAuthentication.SetAuthCookie(user.Username, true);
                 FormsAuthentication.RedirectFromLoginPage(user.Username, true);
 
             }

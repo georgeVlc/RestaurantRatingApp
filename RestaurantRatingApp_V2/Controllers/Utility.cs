@@ -15,12 +15,13 @@ namespace RestaurantRatingApp_V2.Controllers
     {
         // code to verify requested actions
         // generated in runtime
-        private static uint VERIFICATION_CODE = GenHashAsUint();
+        private static uint VERIFICATION_CODE = GenHashAsUint(new Random().Next());
+        private static uint SALT = GenHashAsUint(489);
 
         // creates a byte array of sizeInKb * 1024 random values
-        private static byte[] GetByteArray(uint sizeInKb)
+        private static byte[] GetByteArray(uint sizeInKb, int seed)
         {
-            Random rnd = new Random();
+            Random rnd = new Random(seed);
             byte[] b = new byte[sizeInKb * 1024]; // convert kb to byte
 
             rnd.NextBytes(b);
@@ -29,7 +30,37 @@ namespace RestaurantRatingApp_V2.Controllers
         }
 
         // generates hash code by SHA256
-        private static uint GenHashAsUint() { return BitConverter.ToUInt32(SHA256.Create().ComputeHash(GetByteArray(1)), 0); }
+        private static uint GenHashAsUint(int seed) 
+        { 
+            return BitConverter.ToUInt32(
+                SHA256.Create().
+                    ComputeHash(GetByteArray(
+                        1, seed
+                        )
+                    ), 0
+            ); 
+        }
+
+        public static string HashPassword(string pwd)
+        {
+            var pwdAsInt = Int64.Parse(pwd);
+            var saltAsInt = (Int64)SALT;
+
+            var pwdAndSalt = pwdAsInt + saltAsInt;
+            
+            byte[] pwdAndSaltAsBytes = BitConverter.GetBytes(pwdAndSalt);
+            byte[] hash = SHA256.Create().ComputeHash(pwdAndSaltAsBytes);
+
+            var res = BitConverter.ToInt64(hash, 0);
+
+            return Base64Encode(res.ToString());
+        }
+
+        private static string Base64Encode(string plainText)
+        {
+            var plainTextBytes = Encoding.UTF8.GetBytes(plainText);
+            return Convert.ToBase64String(plainTextBytes);
+        }
 
 
         // is used as request API for given actions related to parameter settings
@@ -46,7 +77,9 @@ namespace RestaurantRatingApp_V2.Controllers
                 List<User> users = new List<User>();
 
                 foreach ((User, string) item in usersData)
+                {
                     users.Add(item.Item1);
+                }
 
                 return users;
             }
@@ -91,6 +124,8 @@ namespace RestaurantRatingApp_V2.Controllers
         {
             try
             {
+                pwd = HashPassword(pwd);
+
                 (User, String) userData = DbAccess.SelectUser(username);
 
                 if (!(userData.Item1 is null) && userData.Item2.Equals(pwd))
@@ -133,6 +168,8 @@ namespace RestaurantRatingApp_V2.Controllers
         {
             try
             {
+                pwd = HashPassword(pwd);
+
                 DbAccess.InsertUser(username, pwd);
                 user.SetAttr(VERIFICATION_CODE, "Username", username);
                 user.SetAttr(VERIFICATION_CODE, "Type", User.UserType.SIGNED);
@@ -226,7 +263,5 @@ namespace RestaurantRatingApp_V2.Controllers
             // return results (maybe not string builder)
             return new StringBuilder();
         }
-
-
     }
 }
