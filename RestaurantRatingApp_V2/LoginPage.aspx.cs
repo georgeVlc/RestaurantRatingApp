@@ -14,8 +14,10 @@ namespace RestaurantRatingApp_V2
 {
     public partial class LoginPage : System.Web.UI.Page
     {
+        User user = new User();
         protected void Page_Load(object sender, EventArgs e)
         {
+            RegisterHyperLink.NavigateUrl = "RegistrationPage.aspx";
             if (!IsPostBack)
             {
                 FormsAuthentication.SignOut();
@@ -29,21 +31,23 @@ namespace RestaurantRatingApp_V2
             string username = UsernameTextBox.Text;
             string password = PasswordTextBox.Text;
 
-
             if (IsValid)
             {
-                User user = new User();
+         
                 try
                 {
                     user.Login(username, password);
                     Session["User"] = user;
+                    FormsAuthentication.SetAuthCookie(user.Username, true);
+                    FormsAuthentication.RedirectFromLoginPage(user.Username, true);
                 }
                 catch (Exception ex)
                 {
                     Debug.WriteLine(ex.Message);
+                    FailureText.Text = "Invalid Credentials Provided";
+                    ErrorMessage.Visible = true;
                 }
-                FormsAuthentication.SetAuthCookie(user.UserName, true);
-                FormsAuthentication.RedirectFromLoginPage(user.Username, true);
+                
 
             }
             else

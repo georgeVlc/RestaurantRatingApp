@@ -199,10 +199,6 @@
     <Content Include="Account\ResetPasswordConfirmation.aspx" />
     <Content Include="Account\TwoFactorAuthenticationSignIn.aspx" />
     <Content Include="Account\VerifyPhoneNumber.aspx" />
-    <Content Include="App_Data\Database.mdf" />
-    <Content Include="App_Data\Database_log.ldf">
-      <DependentUpon>Database.mdf</DependentUpon>
-    </Content>
     <Content Include="Contact.aspx" />
     <Content Include="Content\bootstrap-grid.css" />
     <Content Include="Content\bootstrap-grid.min.css" />
@@ -225,14 +221,17 @@
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
     <Content Include="Account\Web.config" />
-    <Content Include="Images\49679194.png" />
+    <Content Include="Images\Asian.png" />
+    <Content Include="Images\Contemporary.jpg" />
+    <Content Include="Images\DefaultPhoto.png" />
+    <Content Include="Images\FilledStar.gif" />
     <Content Include="Images\Filled_Star.png" />
-    <Content Include="Images\home_5909.jpg" />
-    <Content Include="Images\icons8-user-30.png" />
+    <Content Include="Images\Greek.jpg" />
     <Content Include="Images\icons8-user-60.png" />
-    <Content Include="Images\main_dining_room.jpg" />
-    <Content Include="Images\restaurant_search_img.jpg" />
-    <Content Include="Images\wide-bar-shot.jpg" />
+    <Content Include="Images\Italian.png" />
+    <Content Include="Images\Mexican.png" />
+    <Content Include="Images\Star.gif" />
+    <Content Include="Images\WaitingStar.gif" />
     <Content Include="LoginPage.aspx" />
     <Content Include="RegisterRestaurant.aspx" />
     <Content Include="RegistrationPage.aspx" />
@@ -505,7 +504,9 @@
       <DependentUpon>ViewSwitcher.ascx</DependentUpon>
     </Compile>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="App_Data\" />
+  </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
     <Content Include="Scripts\jquery-3.4.1.slim.min.map" />

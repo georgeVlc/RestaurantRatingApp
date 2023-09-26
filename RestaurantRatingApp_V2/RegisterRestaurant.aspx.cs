@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Web;
+using System.Web.Security;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using static RestaurantRatingApp_V2.Models.Restaurant;
@@ -13,9 +14,10 @@ namespace RestaurantRatingApp_V2
 {
     public partial class RegisterRestaurant : System.Web.UI.Page
     {
-        User user;
+        User user = new User();
         protected void Page_Load(object sender, EventArgs e)
         {
+            
 
             if (Session["User"] != null)
             {
@@ -26,22 +28,30 @@ namespace RestaurantRatingApp_V2
             }
             else
             {
-                Response.Redirect("Default.aspx");
+                Response.Redirect("LoginPage.aspx");
             }
         }
 
 
         protected void btnSubmit_Click(object sender, EventArgs e)
         {
-
-            Restaurant restaurant = new Restaurant();
-            restaurant.Name = txtRestaurantName.Text;
-            restaurant.Description = txtDescription.Text;
-            Enum.TryParse<Restaurant.CousineType>(ddlCategory.Text, out CousineType cousineType);
-            restaurant.Owner = user.UserName;
-            restaurant.Type = CousineType.GREEK;
-            DbAccess.InsertRestaurant(restaurant);
-
+            if (!Utility.RestaurantExists(txtRestaurantName.Text)) 
+            {
+                Restaurant restaurant = new Restaurant();
+                restaurant.Name = txtRestaurantName.Text;
+                restaurant.Description = txtDescription.Text;
+                Enum.TryParse<Restaurant.CousineType>(ddlCategory.Text, out CousineType cousineType);
+                restaurant.Owner = user.Username;
+                restaurant.Type = cousineType;               
+                Utility.AddRestaurant(user, restaurant);
+                SuccessText.Text = "Restaurant Has Been Created Succesfully";
+                Response.Redirect("RestaurantPage.aspx?Name=" + restaurant.Name);
+            }
+            else
+            {
+                FailureText.Text = "Restaurant Credentials Provided Correspond With An Already Existing Restaurant";
+                ErrorMessage.Visible = true;
+            }
         }
     }
 }

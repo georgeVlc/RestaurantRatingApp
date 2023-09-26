@@ -1,6 +1,8 @@
-﻿using RestaurantRatingApp_V2.Models;
+﻿using RestaurantRatingApp_V2.Controllers;
+using RestaurantRatingApp_V2.Models;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
 using System.Linq;
 using System.Reflection.Emit;
@@ -15,6 +17,8 @@ namespace RestaurantRatingApp_V2
     public partial class SearchResults : System.Web.UI.Page
     {
         static string selectedcategory;
+        static string searchedterm;
+        User user = new User();
       
         protected void Page_Load(object sender, EventArgs e)
         {
@@ -22,36 +26,43 @@ namespace RestaurantRatingApp_V2
             if (!IsPostBack)
             {
                 selectedcategory = Request.QueryString["category"];
-            }
+                searchedterm = Request.QueryString["searched"];
+               
+                
+                Debug.WriteLine("Page Load Searched "+ searchedterm);
 
-            
-            if (!string.IsNullOrEmpty(selectedcategory))
-            {
-               // rbfilterlist.SelectedValue = selectedcategory;
-            }
-            
+                if (!string.IsNullOrEmpty(selectedcategory))
+                {
+                    rbfilterlist.SelectedValue = selectedcategory;
+                }
 
-            
+            }          
         }
 
         public List<Restaurant> GetRestaurants()
         {
             List<Restaurant> restaurants = new List<Restaurant>();
-           
-
-            if (string.IsNullOrEmpty(selectedcategory))
+            if (string.IsNullOrEmpty(selectedcategory) && string.IsNullOrEmpty(searchedterm))           //No category and no search term
             {
-                restaurants = DbAccess.SelectRestaurants(-1);
+                restaurants = Utility.GetRestaurants(-1);
+                Restaurant.SortRestaurantsByWilsonScore(restaurants);
+                return restaurants;
             }
-            else 
+            if (!string.IsNullOrEmpty(selectedcategory))                    //Category Selected
+            {              
+                Restaurant.CousineType cousineType;
+                Enum.TryParse<Restaurant.CousineType>(selectedcategory, out cousineType);
+                restaurants = Utility.GetRestaurantsByCousine(cousineType, -1);
+                Restaurant.SortRestaurantsByWilsonScore(restaurants); 
+                return restaurants;
+            }
+
+            if (!string.IsNullOrEmpty(searchedterm))                    //Searched Term
             {
-               // Debug.WriteLine("On DB call" + selectedcategory);
-                restaurants = DbAccess.SelectRestaurantsByCousine(selectedcategory, -1);     
-            }
+                return user.MakeSearch(searchedterm, -1, true);
+            }    
 
-            Restaurant.SortRestaurantsByWilsonScore(restaurants);
-            return restaurants;
-
+         return restaurants;
         }
 
         protected void SelectedIndexChanged(object sender, EventArgs e)
@@ -67,8 +78,6 @@ namespace RestaurantRatingApp_V2
         {
               Response.Redirect("SearchResults.aspx?");
         }
-
-   
 
 
     }

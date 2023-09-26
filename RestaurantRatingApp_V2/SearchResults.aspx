@@ -9,7 +9,7 @@
         <div class="card-body">
             <div class="row">
                 <div class="col-md-4 ">
-                    <div class="card">
+                    <div class="card mt-4">
                         <div class="card-body p-3">
                             <asp:UpdatePanel
                                 ID="UpdatePanel1"
@@ -19,11 +19,11 @@
                                     <h4 class="card-title">Cuisine Filters</h4>
                                       <span>Pick you Favourite</span>
                                     <asp:RadioButtonList ID="rbfilterlist" runat="server" AutoPostBack="true" OnSelectedIndexChanged="SelectedIndexChanged">
-                                        <asp:ListItem Text="Greek" Value="Greek" />
-                                        <asp:ListItem Text="Asian" Value="Asian" />
-                                        <asp:ListItem Text="Contemporary" Value="Contemporary" />
-                                        <asp:ListItem Text="Italian" Value="Italian" />
-                                        <asp:ListItem Text="Mexican" Value="Mexican" />
+                                        <asp:ListItem Text="Greek" Value="GREEK" />
+                                        <asp:ListItem Text="Asian" Value="ASIAN" />
+                                        <asp:ListItem Text="Contemporary" Value="CONTEMPORARY" />
+                                        <asp:ListItem Text="Italian" Value="ITALIAN" />
+                                        <asp:ListItem Text="Mexican" Value="MEXICAN" />
                                     </asp:RadioButtonList>
 
                                     <asp:Button ID="filterButton2" runat="server" class="btn btn-primary" Text="Remove Filters" OnClick="removefilterButtonClick" />
@@ -57,10 +57,10 @@
                                     </tr>
                                 </GroupTemplate>
                                 <ItemTemplate>
-                                    <div class="card mb-2" style="max-width: 800px;">
+                                    <div class="card m-4" style="max-width: 800px;">
                                         <div class="row g-0">
                                             <div class="col-md-4">
-                                                <img src="/Catalog/Images/<%#:Item.ImgName %>" class="img-fluid rounded-start" alt="...">
+                                                <img src="<%#:Item.ImgName %>" class="img-fluid rounded-start" alt="...">
                                             </div>
                                             <div class="col-md-8">
                                                 <div class="card-body p-1">

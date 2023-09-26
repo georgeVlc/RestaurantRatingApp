@@ -15,6 +15,7 @@ namespace RestaurantRatingApp_V2
 {
     public partial class SiteMaster : MasterPage
     {
+        User user = new User();
         private const string AntiXsrfTokenKey = "__AntiXsrfToken";
         private const string AntiXsrfUserNameKey = "__AntiXsrfUserName";
         private string _antiXsrfTokenValue;
@@ -72,10 +73,39 @@ namespace RestaurantRatingApp_V2
 
         protected void Page_Load(object sender, EventArgs e)
         {
+         
+                if (Session["User"] != null)
+                {
+                    user = Session["User"] as User;
+
+                    Debug.WriteLine("SiteMasterPrint:" + user.Username);
+                    Debug.WriteLine("SiteMasterPrint:"+ user.Type.ToString());
+                    
+                }
            
         }
 
-       
+        protected void logout_click(object sender, EventArgs e)
+        {
+
+            if (user.Type != User.UserType.GUEST)
+            {
+                user.Logout();
+                FormsAuthentication.SignOut();
+                Session.Clear();
+                Session.Abandon();
+
+                Debug.WriteLine("lOGOUTCLICK:" + user.Username);
+                Debug.WriteLine("lOGOUTCLICK::" + user.Type.ToString());
+
+                Response.Redirect("Default.aspx");
+
+            }
+
+
+        }
+   
+
             protected void Unnamed_LoggingOut(object sender, LoginCancelEventArgs e)
         {
             Context.GetOwinContext().Authentication.SignOut(DefaultAuthenticationTypes.ApplicationCookie);

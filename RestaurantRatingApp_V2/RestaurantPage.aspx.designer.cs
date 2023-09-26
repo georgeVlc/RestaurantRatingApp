@@ -15,6 +15,15 @@ namespace RestaurantRatingApp_V2
     {
 
         /// <summary>
+        /// ScriptManagerProxy1 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.ScriptManagerProxy ScriptManagerProxy1;
+
+        /// <summary>
         /// restaurantPage control.
         /// </summary>
         /// <remarks>
@@ -24,58 +33,22 @@ namespace RestaurantRatingApp_V2
         protected global::System.Web.UI.WebControls.FormView restaurantPage;
 
         /// <summary>
-        /// ReviewListView control.
+        /// ReviewsListView control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.ListView ReviewListView;
+        protected global::System.Web.UI.WebControls.ListView ReviewsListView;
 
         /// <summary>
-        /// Star1 control.
+        /// Rating1 control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button Star1;
-
-        /// <summary>
-        /// Star2 control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Button Star2;
-
-        /// <summary>
-        /// Star3 control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Button Star3;
-
-        /// <summary>
-        /// Star4 control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Button Star4;
-
-        /// <summary>
-        /// Star5 control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Button Star5;
+        protected global::AjaxControlToolkit.Rating Rating1;
 
         /// <summary>
         /// SubmitBtn control.

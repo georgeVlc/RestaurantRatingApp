@@ -7,6 +7,41 @@ namespace RestaurantRatingApp_V2.Tools
 {
     static class LevenshteinDistance
     {
+        public static int SmartCompute(string s, string t)
+        {
+            if (string.IsNullOrEmpty(s))
+            {
+                if (string.IsNullOrEmpty(t))
+                    return 0;
+                return t.Length;
+            }
+
+            if (string.IsNullOrEmpty(t))
+                return s.Length;
+
+            // connvert both strings to lowercase since case is irrelevant
+            s = s.ToLower();
+            t = t.ToLower();
+
+            // split each string on whitespace since order of tokens is irrelevant
+            string[] sTokens = s.Split(null);
+            string[] tTokens = t.Split(null);
+
+           
+            int sum = 0;
+            foreach (string sToken in sTokens)
+            {
+                foreach (string tToken in tTokens)
+                {
+                    sum += Compute(sToken, tToken);
+                }
+            }
+
+            return sum;
+          
+       
+        }
+
         public static int Compute(string s, string t)
         {
             if (string.IsNullOrEmpty(s))
@@ -17,9 +52,7 @@ namespace RestaurantRatingApp_V2.Tools
             }
 
             if (string.IsNullOrEmpty(t))
-            {
                 return s.Length;
-            }
 
             int n = s.Length;
             int m = t.Length;

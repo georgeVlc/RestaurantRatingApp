@@ -11,7 +11,7 @@
     <asp:PlaceHolder runat="server">
         <%: Scripts.Render("~/bundles/modernizr") %>
     </asp:PlaceHolder>
-    <webopt:bundlereference runat="server" path="~/Content/css" />
+    <webopt:BundleReference runat="server" Path="~/Content/css" />
     <link href="~/favicon.ico" rel="shortcut icon" type="image/x-icon" />
 
 </head>
@@ -35,10 +35,9 @@
                 <%--Site Scripts--%>
             </Scripts>
         </asp:ScriptManager>
-
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-dark bg-dark">
             <div class="container">
-                <a class="navbar-brand" runat="server" href="~/">Application name</a>
+                <a class="navbar-brand" runat="server" href="~/">Food For U</a>
                 <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" title="Toggle navigation" aria-controls="navbarSupportedContent"
                     aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
@@ -46,12 +45,13 @@
                 <div class="collapse navbar-collapse d-sm-inline-flex justify-content-between">
                     <ul class="navbar-nav flex-grow-1">
                     </ul>
-                    <asp:LoginView ID="NavLoginView" runat="server" ViewStateMode="Enabled" >
+                    <asp:LoginView ID="NavLoginView" runat="server" ViewStateMode="Enabled">
                         <AnonymousTemplate>
                             <ul class="navbar-nav navbar-right">
-                                <li><a runat="server" class="nav-link" href="~/Account/Register">Register</a></li>
-                                <li><a runat="server" class="nav-link" href="~/Account/Login">Log in</a></li>
-                                <li class="nav-item"><a class="nav-link" runat="server" href="~/About">About</a></li>
+                                <li><a runat="server" class="btn nav-link" href="~/RegistrationPage.aspx">Register</a></li>
+                                <li><a runat="server" class="btn nav-link" href="~/LoginPage.aspx">Log in</a></li>
+                                <li><asp:Button ID="Mybutton" Text="Log Out" OnClick="logout_click" CssClass="btn nav-link" runat="server"/></li>          
+                                <li class="nav-item"><a class="btn nav-link" runat="server" href="~/About">About</a></li>
                             </ul>
                         </AnonymousTemplate>
                         <LoggedInTemplate>
@@ -71,11 +71,10 @@
             </asp:ContentPlaceHolder>
             <hr />
             <footer>
-               
             </footer>
         </div>
     </form>
-     <asp:PlaceHolder runat="server">
+    <asp:PlaceHolder runat="server">
         <%: Scripts.Render("~/Scripts/bootstrap.js") %>
     </asp:PlaceHolder>
 

@@ -8,8 +8,18 @@
                 <div class="col-md-8">
                     <div class="form-horizontal">
                         <h2>Restaurant Registration Form</h2>
-                        <p>To be able to register your restaurant with us you must be logged in from an owner account</p>
+                        <p>To be able to register your restaurant with us you must be logged in</p>
                        <hr />
+                        <asp:PlaceHolder runat="server" ID="ErrorMessage" Visible="false">
+                            <p class="text-danger">
+                                <asp:Literal runat="server" ID="FailureText" />
+                            </p>
+                        </asp:PlaceHolder>
+                        <asp:PlaceHolder runat="server" ID="SuccessMessage" Visible="false">
+                            <p class="text-danger">
+                                <asp:Literal runat="server" ID="SuccessText" />
+                            </p>
+                        </asp:PlaceHolder>
                         <div class="form-group">
                             <asp:Label ID="lblRestaurantName" runat="server" Text="Restaurant Name:"></asp:Label>
                             <div class="col-md-10">
@@ -24,17 +34,15 @@
                                 </asp:RequiredFieldValidator>
                             </div>
                         </div>
-
                         <div class="form-group">
                             <asp:Label ID="lblCategory" runat="server" Text="Category:"></asp:Label>
                             <div class="col-md-10">
                                 <asp:DropDownList ID="ddlCategory" runat="server">
-                                    <asp:ListItem Text="Greek" Value="Greek" />
-                                    <asp:ListItem Text="Asian" Value="Asian" />
-                                    <asp:ListItem Text="Contemporary" Value="Contemporary" />
-                                    <asp:ListItem Text="Italian" Value="Italian" />
-                                    <asp:ListItem Text="Mexican" Value="Mexican" />
-
+                                    <asp:ListItem Text="Greek" Value="GREEK" />
+                                    <asp:ListItem Text="Asian" Value="ASIAN" />
+                                    <asp:ListItem Text="Contemporary" Value="CONTEMPORARY" />
+                                    <asp:ListItem Text="Italian" Value="ITALIAN" />
+                                    <asp:ListItem Text="Mexican" Value="MEXICAN" />
                                 </asp:DropDownList>
                                 <asp:RequiredFieldValidator ID="rfvCategory" runat="server"
                                     ControlToValidate="ddlCategory"

@@ -1,4 +1,5 @@
-﻿using RestaurantRatingApp_V2.Models;
+﻿using RestaurantRatingApp_V2.Controllers;
+using RestaurantRatingApp_V2.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,10 +15,13 @@ namespace RestaurantRatingApp_V2
     {
         protected void Page_Load(object sender, EventArgs e)
         {
+            if (!IsPostBack)
+            {
+                FormsAuthentication.SignOut();
+                Session.Clear();
+                Session.Abandon();
+            }
         }
-
-
-
 
         protected void CreateUser_Click(object sender, EventArgs e)
         {
@@ -26,18 +30,19 @@ namespace RestaurantRatingApp_V2
 
             if (IsValid)
             {
-                if (!(DbAccess.UserExists(username)))
+                if (!(Utility.UserExists(username)))
                 {
-                    DbAccess.InsertUser(username, password);            // To be properly Implemented
-                    User user = DbAccess.SelectUserByUsername(username);
+                    User user = new User();
+                    user.SignUp(username, password);
                     Session["User"] = user;
-                    FormsAuthentication.SetAuthCookie(user.UserName, true);
+                    FormsAuthentication.SetAuthCookie(user.Username, true);
                     FormsAuthentication.RedirectFromLoginPage(user.Username, true);
                 }
                 else
                 {
-                    FailureText.Text = "Invalid Sign Up attempt";
+                    FailureText.Text = "Invalid Sign Up Attempt. A User With The Same Username Already Exists";
                     ErrorMessage.Visible = true;
+                   
                 }
 
             }

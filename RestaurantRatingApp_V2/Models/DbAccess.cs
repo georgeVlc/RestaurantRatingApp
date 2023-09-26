@@ -19,6 +19,31 @@ namespace RestaurantRatingApp_V2.Models
 {
     public class DbAccess
     {
+
+        public static void ChangeUserPassword(string username, string newPwd)
+        {
+            try
+            {
+                string conString = ConfigurationManager.ConnectionStrings["RestaurantRatingApp"].ConnectionString;
+                using (SqlConnection connection = new SqlConnection(conString))
+                {
+                    connection.Open();
+                    SqlCommand cm = new SqlCommand(
+                        "update Users set Users.userPwd = '" + newPwd +
+                        "' where Users.userName = '" + username + "';",
+                        connection
+                    );
+                    SqlDataReader sdr = cm.ExecuteReader();
+                }
+            }
+            catch (Exception e)
+            {
+                e.Data.Add("UserMessage", "An error occured while updating User " + username);
+                throw e;
+            }
+        }
+
+
         public static void UpdateRestaurantRating(String restaurantName)
         {
             try
@@ -225,8 +250,8 @@ namespace RestaurantRatingApp_V2.Models
             return restaurantList;
         }
 
-            return restaurantList;
-        }
+
+
 
         public static List<Restaurant> SelectRestaurantsByCousine(string cousineType, int numOfRestaurants)
         {
@@ -294,8 +319,8 @@ namespace RestaurantRatingApp_V2.Models
                     {
                         reviewsList.Add(
                             new Review(
-                                sdr["userName"].ToString(),
                                 sdr["resName"].ToString(),
+                                sdr["userName"].ToString(),
                                 float.Parse(sdr["revRating"].ToString())
                             )
                         );
@@ -333,8 +358,8 @@ namespace RestaurantRatingApp_V2.Models
                     {
                         reviewsList.Add(
                             new Review(
-                                sdr["userName"].ToString(),
                                 sdr["resName"].ToString(),
+                                sdr["userName"].ToString(),
                                 float.Parse(sdr["revRating"].ToString())
                             )
                         );
@@ -371,8 +396,8 @@ namespace RestaurantRatingApp_V2.Models
                     {
                         reviewsList.Add(
                             new Review(
+                               sdr["resName"].ToString(),
                                 sdr["userName"].ToString(),
-                                sdr["resName"].ToString(),
                                 float.Parse(sdr["revRating"].ToString())
                             )
                         );
@@ -561,12 +586,33 @@ namespace RestaurantRatingApp_V2.Models
             }
         }
 
+        public static bool RestaurantExists(String restaurantName)
+        {
+            try
+            {
+                string ConString = ConfigurationManager.ConnectionStrings["RestaurantRatingApp"].ConnectionString;
 
-        //---------------------------------------------------------------------------//
-        //Dimitris 
-        //Methods to be called by the Utility class
+                using (SqlConnection connection = new SqlConnection(ConString))
+                {
+                    connection.Open();
+                    SqlCommand cm = new SqlCommand("SELECT COUNT(*)  FROM Restaurant WHERE resName = @Restaurantname", connection);
+                    {
+                        cm.Parameters.AddWithValue("@Restaurantname", restaurantName);
+                        int count = (int)cm.ExecuteScalar();
 
-        public static Restaurant SelectRestaurant(String name)
+                        return count > 0;
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                e.Data.Add("UserMessage", "An error occured During Restaurant creation");
+                throw e;
+            }
+        }
+
+
+        public static Restaurant SelectRestaurant(String name)                  //In use
         {
             Debug.WriteLine("Name:" + name);
             try
@@ -604,7 +650,39 @@ namespace RestaurantRatingApp_V2.Models
 
         }
 
-        public static List<Restaurant> SelectTopRated()
+        public static bool HasReviewed(string username, string restaurantName)
+        {
+            try
+            {
+                string ConString = ConfigurationManager.ConnectionStrings["RestaurantRatingApp"].ConnectionString;
+
+                using (SqlConnection connection = new SqlConnection(ConString))
+                {
+                    connection.Open();
+                    SqlCommand cm = new SqlCommand("SELECT COUNT(*)  FROM Reviews WHERE userName = @Username AND resName = @RestaurantName", connection);
+                    {
+                        cm.Parameters.AddWithValue("@Username", username);
+                        cm.Parameters.AddWithValue("@RestaurantName", restaurantName);
+                        int count = (int)cm.ExecuteScalar();
+
+                        return count > 0;
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                e.Data.Add("UserMessage", "An error occured During Review");
+                throw e;
+            }
+        }
+
+        //---------------------------------------------------------------------------//
+        //Dimitris 
+        //Methods to be called by the Utility class
+
+
+
+        public static List<Restaurant> SelectTopRated()         //in use
         {
             List<Restaurant> restaurantList = new List<Restaurant>();
             try
@@ -689,13 +767,13 @@ namespace RestaurantRatingApp_V2.Models
                 using (SqlConnection connection = new SqlConnection(ConString))
                 {
                     connection.Open();
-                    SqlCommand cm = new SqlCommand("SELECT COUNT(*)  FROM Users WHERE userName = @Username",connection);
+                    SqlCommand cm = new SqlCommand("SELECT COUNT(*)  FROM Users WHERE userName = @Username", connection);
                     {
                         cm.Parameters.AddWithValue("@Username", username);
                         int count = (int)cm.ExecuteScalar();
 
                         if (count > 0) { return true; }
-                  
+
                         return false;
 
                     }
@@ -707,10 +785,10 @@ namespace RestaurantRatingApp_V2.Models
                 e.Data.Add("UserMessage", "An error occured During Sign Up");
                 throw e;
             }
-        }
+        }           //In use
 
 
-       
+
 
 
 
@@ -764,7 +842,7 @@ namespace RestaurantRatingApp_V2.Models
 
 
 
-
     }
 }
+
 

@@ -15,21 +15,62 @@ namespace RestaurantRatingApp_V2.Controllers
     {
         // code to verify requested actions
         // generated in runtime
-        private static uint VERIFICATION_CODE = GenHashAsUint();
+   
+        private static uint VERIFICATION_CODE = GenHashAsUint(new Random().Next());
+        private static uint SALT = GenHashAsUint(489);
 
         // creates a byte array of sizeInKb * 1024 random values
-        private static byte[] GetByteArray(uint sizeInKb)
+      
+        private static byte[] GetByteArray(uint sizeInKb, int seed)
         {
-            Random rnd = new Random();
+   
+            Random rnd = new Random(seed);
             byte[] b = new byte[sizeInKb * 1024]; // convert kb to byte
 
             rnd.NextBytes(b);
-
             return b;
         }
 
         // generates hash code by SHA256
-        private static uint GenHashAsUint() { return BitConverter.ToUInt32(SHA256.Create().ComputeHash(GetByteArray(1)), 0); }
+        private static uint GenHashAsUint(int seed)
+        {
+            return BitConverter.ToUInt32(
+                SHA256.Create().
+                    ComputeHash(GetByteArray(
+                        1, seed
+                        )
+                    ), 0
+            );
+        }
+
+        public static string HashPassword(string pwd)
+        {
+            bool res = Int64.TryParse(pwd, out long pwdAsInt);
+            if (!res)
+            {
+
+                byte[] pwdAsciiBytes = Encoding.ASCII.GetBytes(pwd);
+                pwdAsInt = (Int64)0;
+                foreach (byte b in pwdAsciiBytes)
+                    pwdAsInt += b;
+            }
+
+            var saltAsInt = (Int64)SALT;
+            var pwdAndSalt = pwdAsInt + saltAsInt;
+
+            byte[] pwdAndSaltAsBytes = BitConverter.GetBytes(pwdAndSalt);
+            byte[] hash = SHA256.Create().ComputeHash(pwdAndSaltAsBytes);
+
+            var resBytes = BitConverter.ToInt64(hash, 0);
+
+            return Base64Encode(resBytes.ToString());
+        }
+
+        private static string Base64Encode(string plainText)
+        {
+            var plainTextBytes = Encoding.UTF8.GetBytes(plainText);
+            return Convert.ToBase64String(plainTextBytes);
+        }
 
 
         // is used as request API for given actions related to parameter settings
@@ -46,8 +87,9 @@ namespace RestaurantRatingApp_V2.Controllers
                 List<User> users = new List<User>();
 
                 foreach ((User, string) item in usersData)
+                {
                     users.Add(item.Item1);
-
+                }
                 return users;
             }
             catch (Exception e)
@@ -91,6 +133,7 @@ namespace RestaurantRatingApp_V2.Controllers
         {
             try
             {
+                pwd = HashPassword(pwd);
                 (User, String) userData = DbAccess.SelectUser(username);
 
                 if (!(userData.Item1 is null) && userData.Item2.Equals(pwd))
@@ -133,6 +176,7 @@ namespace RestaurantRatingApp_V2.Controllers
         {
             try
             {
+                pwd = HashPassword(pwd);
                 DbAccess.InsertUser(username, pwd);
                 user.SetAttr(VERIFICATION_CODE, "Username", username);
                 user.SetAttr(VERIFICATION_CODE, "Type", User.UserType.SIGNED);
@@ -192,8 +236,11 @@ namespace RestaurantRatingApp_V2.Controllers
         {
             try
             {
+                Debug.WriteLine(user.Type.ToString());
+                Debug.WriteLine(user.Username);
                 if (user.Type == User.UserType.GUEST)
                     throw new Exception("Unauthorized action, you need to be SIGNED-IN to continue");
+                
 
                 DbAccess.InsertReview(review);
                 // update restaurant rating?
@@ -208,7 +255,7 @@ namespace RestaurantRatingApp_V2.Controllers
         {
             try
             {
-                if (user.Type == User.UserType.GUEST)
+                if (user.Type == User.UserType.GUEST)  
                     throw new Exception("Unauthorized action, you need to be SIGNED-IN to continue");
 
                 DbAccess.DeleteReview(user.Username, review.RestaurantName);
@@ -220,11 +267,59 @@ namespace RestaurantRatingApp_V2.Controllers
             }
         }
 
-        public static StringBuilder MakeSearch(StringBuilder sb)
+        public static List<Restaurant> MakeSearch(string inputStr, int numOfRestaurants, bool searchByRestaurantName = true)
         {
-            // DBHandler.MakeSearch
-            // return results (maybe not string builder)
-            return new StringBuilder();
+            try
+            {
+                List<Restaurant> restaurants = Utility.GetRestaurants(numOfRestaurants: -1);
+                List<(Restaurant, int)> restaurantSimilarity = new List<(Restaurant, int)>();
+
+                foreach (Restaurant restaurant in restaurants)
+                {
+                    (Restaurant, int) tuple = (restaurant, 0);
+
+                    if (searchByRestaurantName)
+                        tuple.Item2 = Tools.LevenshteinDistance.SmartCompute(inputStr, restaurant.Name);
+                    else
+                        tuple.Item2 = Tools.LevenshteinDistance.SmartCompute(inputStr, restaurant.Description);
+
+                    restaurantSimilarity.Add(tuple);
+                }
+
+                var mostSimilar = restaurantSimilarity.OrderBy(x => x.Item2).ToList();
+
+                return mostSimilar.Select(x => x.Item1).ToList();
+            }
+            catch (Exception e)
+            { throw e; }
+        }
+
+
+        public static bool UserExists(String username)
+        {
+            try {return DbAccess.UserExists(username); }
+            catch (Exception e) {throw e;}
+        }
+
+
+        public static Restaurant GetRestaurantByName(String name)          //Returns Restaurant by name
+        {
+            try { Restaurant restaurant = DbAccess.SelectRestaurant(name); return restaurant; }
+            catch (Exception e){ throw e; }
+
+        }
+
+        public static bool RestaurantExists(String restaurantName)
+        {
+            try{ return DbAccess.RestaurantExists(restaurantName);}
+            catch (Exception e) { throw e; }    
+        }
+
+        public static bool HasReviewed(string username, string restaurantName)
+        {
+            
+            try { return DbAccess.HasReviewed(username, restaurantName);}
+            catch (Exception e) { throw e; }
         }
 
 
