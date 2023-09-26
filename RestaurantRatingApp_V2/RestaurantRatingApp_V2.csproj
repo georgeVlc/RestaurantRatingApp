@@ -494,7 +494,6 @@
     </Compile>
     <Compile Include="Startup.cs" />
     <Compile Include="Tests\Test.cs" />
-    <Compile Include="Tools\HashClass.cs" />
     <Compile Include="Tools\LevenshteinDistance.cs" />
     <Compile Include="ViewSwitcher.ascx.cs">
       <DependentUpon>ViewSwitcher.ascx</DependentUpon>

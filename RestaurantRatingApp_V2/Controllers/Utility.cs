@@ -321,7 +321,5 @@ namespace RestaurantRatingApp_V2.Controllers
             try { return DbAccess.HasReviewed(username, restaurantName);}
             catch (Exception e) { throw e; }
         }
-
-
     }
 }

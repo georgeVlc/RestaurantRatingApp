@@ -4,7 +4,7 @@
 
     <style type="text/css">
         .bg-image {
-            background-image: url('Images/49679194.png');
+            background-image: url('Images/DefaultPhoto.png');
             background-size: cover;
             background-position: center;
             min-height: 650px;

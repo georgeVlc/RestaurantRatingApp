@@ -15,6 +15,7 @@ using System.Linq;
 using System.Web.Configuration;
 using System.Web.Security;
 
+
 namespace RestaurantRatingApp_V2.Models
 {
     public class DbAccess
@@ -142,7 +143,6 @@ namespace RestaurantRatingApp_V2.Models
                                 sdr["userPwd"].ToString()
                             )
                         );
-
                     }
                 }
             }
@@ -837,6 +837,7 @@ namespace RestaurantRatingApp_V2.Models
                 throw e;
             }
         }
+
 
 
 
